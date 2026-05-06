@@ -67,6 +67,7 @@ jobs:
       if: 'steps.step-3.outputs.exists == ''false'''
     - id: 'step-5'
       name: 'Create Package Zip'
+      working-directory: '${{ matrix.package-name }}'
       run: 'zip -r "${{ github.workspace }}/${{ env.zipFile }}" .'
       if: 'steps.step-3.outputs.exists == ''false'''
     - id: 'step-6'

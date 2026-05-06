@@ -145,8 +145,9 @@ workflow(
             condition = tagDoesNotExist,
             name = "Create Package Zip",
             //TODO: use outputs of previous step ?
+            workingDirectory = packagePath,
             command = $$"""
-                zip -r "${{ github.workspace }}/${{ env.zipFile }}" .
+                zip -r "$${expr { github.workspace }}/$${expr("env.zipFile")}" .
             """.trimIndent()
         )
 
