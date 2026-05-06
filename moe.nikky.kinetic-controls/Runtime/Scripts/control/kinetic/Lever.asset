@@ -20,7 +20,7 @@ MonoBehaviour:
   compiledVersion: 2
   behaviourSyncMode: 4
   hasInteractEvent: 0
-  scriptID: -5348506788857112027
+  scriptID: 6909482694598554928
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -1022,7 +1022,7 @@ MonoBehaviour:
       Data: 53|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: nikkyai.common.BoolDriver[], moe.nikky.kinetic-controls
+      Data: moe.nikky.common.BoolDriver[], moe.nikky.common
     - Name: 
       Entry: 8
       Data: 
@@ -1488,7 +1488,7 @@ MonoBehaviour:
       Data: 86|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: nikkyai.common.FloatDriver[], moe.nikky.kinetic-controls
+      Data: moe.nikky.common.FloatDriver[], moe.nikky.common
     - Name: 
       Entry: 8
       Data: 
@@ -2732,7 +2732,7 @@ MonoBehaviour:
       Data: 159|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: nikkyai.control.kinetic.HandleAbstract, moe.nikky.kinetic-controls
+      Data: moe.nikky.kinetic_controls.control.kinetic.HandleAbstract, moe.nikky.kinetic-controls
     - Name: 
       Entry: 8
       Data: 
@@ -2921,7 +2921,7 @@ MonoBehaviour:
       Data: 171|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: nikkyai.Kinetic_Controls.Axis, moe.nikky.kinetic-controls
+      Data: moe.nikky.kinetic_controls.control.kinetic.Axis, moe.nikky.kinetic-controls
     - Name: 
       Entry: 8
       Data: 

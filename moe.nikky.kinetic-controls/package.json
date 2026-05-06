@@ -1,13 +1,12 @@
 {
-  "name": "moe.nikky.kinetic-controls-test",
-  "displayName": "Kinetic Controls Test",
-  "version": "0.1.0-dev.7",
+  "name": "moe.nikky.kinetic-controls",
+  "displayName": "Kinetic Controls",
+  "version": "0.1.0-dev.8",
   "description": "Faders, Levers and other controls that can be moved with your hands",
-  "changelogUrl": "https://github.com/NikkyAI/Kinetic-Controls/releases",
+  "changelogUrl": "https://github.com/NikkyAI/UdonScripts/releases",
   "gitDependencies": {},
   "vpmDependencies": {
-    "moe.nikky.common": "^0.1.0",
-    "com.llealloo.audiolink": "^3.1.2",
+    "moe.nikky.common": "^0.1.0-dev.2",
     "com.texelsaur.access": "^1.2.4",
     "com.texelsaur.misc": "^1.0.5",
     "sh.orels.shaders": "^7.2.0"

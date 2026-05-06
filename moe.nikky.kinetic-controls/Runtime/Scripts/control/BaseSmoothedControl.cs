@@ -1,11 +1,9 @@
 ﻿#define READONLY
 
 using System;
-using System.ComponentModel;
-using moe.nikky.kinetic_controls.common;
+using moe.nikky.common;
 using UdonSharp;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.control
@@ -21,26 +19,26 @@ namespace moe.nikky.kinetic_controls.control
         [Header("Base Smoothed Control")]
         [SerializeField, UdonSynced] //
 #if READONLY
-        [attribute.ReadOnly]
+        [ReadOnly]
 #endif
         internal bool synced = true;
 
         [SerializeField]
         [Tooltip("The range of values that this behaviour will send to any attached float drivers")]
 #if READONLY
-        [attribute.ReadOnly]
+        [ReadOnly]
 #endif
         internal Vector2 outputRange = new Vector2(0, 1);
 
         [SerializeField]
 #if READONLY
-        [attribute.ReadOnly]
+        [ReadOnly]
 #endif
         [Range(0, 1)]
         internal float defaultValueNormalized = 0.25f;
         [SerializeField]
 #if READONLY
-        [attribute.ReadOnly]
+        [ReadOnly]
 #endif
         internal float defaultValue = 0;
 
@@ -54,20 +52,20 @@ namespace moe.nikky.kinetic_controls.control
         [Header("Base Smoothed Control - Drivers")] // header
         [SerializeField]
 #if READONLY
-        [attribute.ReadOnly]
+        [ReadOnly]
 #endif
         [Obsolete]
         internal GameObject floatTargetValueDrivers;
 
         [SerializeField]
 #if READONLY
-        [attribute.ReadOnly]
+        [ReadOnly]
 #endif
         [Obsolete]
         internal GameObject floatSmoothedValueDrivers;
 
-        [SerializeField, attribute.ReadOnly, NonReorderable] public FloatDriver[] targetValueFloatDrivers = Array.Empty<FloatDriver>();
-        [SerializeField, attribute.ReadOnly, NonReorderable] internal FloatDriver[] smoothedValueFloatDrivers = Array.Empty<FloatDriver>();
+        [SerializeField, ReadOnly, NonReorderable] public FloatDriver[] targetValueFloatDrivers = Array.Empty<FloatDriver>();
+        [SerializeField, ReadOnly, NonReorderable] internal FloatDriver[] smoothedValueFloatDrivers = Array.Empty<FloatDriver>();
 
         #endregion
 
@@ -78,7 +76,7 @@ namespace moe.nikky.kinetic_controls.control
              "smoothes out value updates over time, may impact CPU frametimes AND cause more updates to FloatDrivers")]
         [SerializeField]
 #if READONLY
-        [attribute.ReadOnly]
+        [ReadOnly]
 #endif
         internal bool enableValueSmoothing = true;
 
@@ -92,7 +90,7 @@ namespace moe.nikky.kinetic_controls.control
                  "higher number == less load, but more choppy smoothing")]
         [SerializeField]
 #if READONLY
-        [attribute.ReadOnly]
+        [ReadOnly]
 #endif
         [Range(1, 10)]
         internal int smoothingUpdateInterval = 3;
@@ -116,7 +114,7 @@ namespace moe.nikky.kinetic_controls.control
         [Tooltip("higher values -> faster synchronization with the target maxSpeed")]
         [SerializeField]
 #if READONLY
-        [attribute.ReadOnly]
+        [ReadOnly]
 #endif
         [Range(0f, 2.5f)]
         public float smoothingTime = 0.1f;
@@ -124,7 +122,7 @@ namespace moe.nikky.kinetic_controls.control
         [Tooltip("Maximum speed that smoothing can move at (see Unity Mathf.SmoothDamp maxSpeed parameter)")]
         [SerializeField]
 #if READONLY
-        [attribute.ReadOnly]
+        [ReadOnly]
 #endif
         [Range(0f, 1f)]
         public float smoothingMaxSpeed = 0.25f;
@@ -133,7 +131,7 @@ namespace moe.nikky.kinetic_controls.control
         protected float smoothedCurrentNormalized;
 
         [SerializeField]
-        [attribute.ReadOnly]
+        [ReadOnly]
         internal bool isCyclic = false;
 
         private const float Epsilon = 0.005f;
@@ -413,8 +411,8 @@ namespace moe.nikky.kinetic_controls.control
             float target,
             ref float currentVelocity,
             float smoothTime,
-            [DefaultValue("Mathf.Infinity")] float maxSpeed,
-            [DefaultValue("Time.deltaTime")] float deltaTime
+            [System.ComponentModel.DefaultValue("Mathf.Infinity")] float maxSpeed,
+            [System.ComponentModel.DefaultValue("Time.deltaTime")] float deltaTime
         )
         {
             // Based on Game Programming Gems 4 Chapter 1.10

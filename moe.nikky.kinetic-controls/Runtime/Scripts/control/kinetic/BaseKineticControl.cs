@@ -1,15 +1,9 @@
 ﻿#define READONLY
 
 using System;
-using moe.nikky.kinetic_controls.attribute;
-using moe.nikky.kinetic_controls.Utils;
+using moe.nikky.common;
 using UdonSharp;
 using UnityEngine;
-using UnityEngine.Serialization;
-using VRC;
-using VRC.Dynamics;
-using VRC.SDK3.Components;
-using VRC.SDK3.Midi;
 using VRC.SDKBase;
 
 // ReSharper disable ForCanBeConvertedToForeach

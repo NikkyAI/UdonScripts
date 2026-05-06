@@ -1,5 +1,5 @@
-﻿using moe.nikky.kinetic_controls.common;
-using moe.nikky.kinetic_controls.Kinetic_Controls;
+﻿using moe.nikky.common;
+using moe.nikky.kinetic_controls.control.kinetic;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;

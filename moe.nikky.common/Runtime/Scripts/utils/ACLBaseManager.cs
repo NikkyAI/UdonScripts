@@ -1,13 +1,11 @@
-﻿using System;
-using moe.nikky.kinetic_controls.common;
-using Texel;
+﻿using Texel;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
 
 // ReSharper disable ForCanBeConvertedToForeach
 
-namespace moe.nikky.kinetic_controls.utils
+namespace moe.nikky.common.utils
 {
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class ACLBaseManager : ACLBaseSimple

@@ -1,7 +1,6 @@
-﻿using moe.nikky.kinetic_controls.attribute;
-using moe.nikky.kinetic_controls.common;
+﻿using moe.nikky.common;
+using moe.nikky.common;
 using moe.nikky.kinetic_controls.Editor;
-using moe.nikky.kinetic_controls.extensions;
 using UnityEngine;
 using UnityEngine.Serialization;
 using VRC;

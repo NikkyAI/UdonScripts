@@ -1,4 +1,4 @@
-﻿using moe.nikky.kinetic_controls.common;
+﻿using moe.nikky.common;
 using UnityEngine;
 using UnityEngine.Rendering;
 using VRC.SDKBase;

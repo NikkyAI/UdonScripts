@@ -20,7 +20,7 @@ MonoBehaviour:
   compiledVersion: 2
   behaviourSyncMode: 1
   hasInteractEvent: 0
-  scriptID: -5369533748873584301
+  scriptID: -1446432379566431828
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -844,7 +844,7 @@ MonoBehaviour:
       Data: 43|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: nikkyai.common.BaseBehaviour[], moe.nikky.kinetic-controls
+      Data: moe.nikky.common.BaseBehaviour[], moe.nikky.common
     - Name: 
       Entry: 8
       Data: 

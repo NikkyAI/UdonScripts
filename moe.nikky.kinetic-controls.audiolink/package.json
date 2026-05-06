@@ -1,0 +1,22 @@
+{
+  "name": "moe.nikky.kinetic-controls.audiolink",
+  "displayName": "Kinetic Controls Audiolink",
+  "version": "0.1.0-dev.2",
+  "description": "audiolink specific drivers for kinetic controls",
+  "changelogUrl": "https://github.com/NikkyAI/UdonScripts/releases",
+  "gitDependencies": {},
+  "vpmDependencies": {
+    "moe.nikky.kinetic-controls": "^0.1.0-dev.8",
+    "com.llealloo.audiolink": "^3.1.2",
+    "com.texelsaur.access": "^1.2.4",
+    "com.texelsaur.misc": "^1.0.5",
+    "sh.orels.shaders": "^7.2.0"
+  },
+  "author": {
+    "name": "NikkyAI",
+    "email": "",
+    "url": "https://github.com/NikkyAI"
+  },
+  "legacyFolders": {},
+  "legacyFiles": {}
+}

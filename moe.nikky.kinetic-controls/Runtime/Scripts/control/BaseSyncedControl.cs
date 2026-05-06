@@ -1,4 +1,4 @@
-﻿using moe.nikky.kinetic_controls.common;
+﻿using moe.nikky.common;
 using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.control

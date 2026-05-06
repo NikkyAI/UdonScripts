@@ -1,8 +1,6 @@
-﻿using System.ComponentModel;
-using moe.nikky.kinetic_controls.common;
-using moe.nikky.kinetic_controls.attribute;
+﻿using moe.nikky.common;
+using moe.nikky.common;
 using moe.nikky.kinetic_controls.Editor;
-using moe.nikky.kinetic_controls.extensions;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -19,7 +17,7 @@ namespace moe.nikky.kinetic_controls.control.interact
     public class TriggerButton : ACLBaseSimple
     {
         [Header("Trigger - MIDI - Requires VRC_MidiListener Component")] //
-        [SerializeField, Description("Requires a VRC MIDI Listened with NoteOn enabled")]
+        [SerializeField, Tooltip("Requires a VRC MIDI Listened with NoteOn enabled")]
         protected bool midiEnabled = true;
         [SerializeField, Range(0,15)]
         protected int midiChannel = 0;
@@ -36,7 +34,7 @@ namespace moe.nikky.kinetic_controls.control.interact
         protected override string LogPrefix => nameof(TriggerButton);
     
         [SerializeField] 
-        [attribute.ReadOnly]
+        [ReadOnly]
         private TriggerDriver[] triggerDriversReadonly = { };
 
         void Start()

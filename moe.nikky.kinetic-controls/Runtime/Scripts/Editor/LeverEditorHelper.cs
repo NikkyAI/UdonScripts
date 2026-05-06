@@ -1,8 +1,7 @@
 using System;
-using moe.nikky.kinetic_controls.common;
+using moe.nikky.common;
+using moe.nikky.common.utils;
 using moe.nikky.kinetic_controls.control.kinetic;
-using moe.nikky.kinetic_controls.Kinetic_Controls;
-using moe.nikky.kinetic_controls.Utils;
 using Texel;
 using UdonSharp;
 using UnityEditor;

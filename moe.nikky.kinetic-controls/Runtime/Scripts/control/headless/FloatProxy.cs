@@ -1,7 +1,7 @@
 ﻿#define READONLY
 
 using System;
-using moe.nikky.kinetic_controls.common;
+using moe.nikky.common;
 using moe.nikky.kinetic_controls.Editor;
 using UdonSharp;
 using UnityEngine;
@@ -17,13 +17,13 @@ namespace moe.nikky.kinetic_controls.control.headless
     public class FloatProxy : LoggingSimple
     {
         [SerializeField]
-#if READONLY
-        [attribute.ReadOnly]
-#endif
+// #if READONLY
+//         [ReadOnly]
+// #endif
         [Obsolete]
         internal GameObject floatDriverSource;
 
-        [SerializeField, attribute.ReadOnly, NonReorderable]
+        [SerializeField, ReadOnly, NonReorderable]
         public FloatDriver[] floatDrivers = Array.Empty<FloatDriver>();
 
 

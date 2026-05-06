@@ -1,7 +1,6 @@
 ﻿using System;
-using moe.nikky.kinetic_controls.common;
-using moe.nikky.kinetic_controls.Kinetic_Controls;
-using moe.nikky.kinetic_controls.Utils;
+using moe.nikky.common;
+using moe.nikky.common.utils;
 using TMPro;
 using UnityEngine;
 using VRC;

@@ -1,11 +1,9 @@
 ﻿// #define DEBUG_LOGGING
 
 using System.Collections.Generic;
-using moe.nikky.kinetic_controls.driver.text;
-using Texel;
 using UnityEngine;
 
-namespace moe.nikky.kinetic_controls.Utils
+namespace moe.nikky.common.utils
 {
     public static class ValidationCache
     {

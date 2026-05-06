@@ -1,9 +1,9 @@
 {
   "name": "moe.nikky.common",
-  "displayName": "CommonDependencies",
-  "version": "0.1.0-dev.1",
+  "displayName": "moe.nikky.common",
+  "version": "0.1.0-dev.2",
   "description": "shared dependencies for other packages",
-  "changelogUrl": "https://github.com/NikkyAI/Kinetic-Controls/releases",
+  "changelogUrl": "https://github.com/NikkyAI/UdonScripts/releases",
   "gitDependencies": {},
   "vpmDependencies": {
     "com.texelsaur.access": "^1.2.4",

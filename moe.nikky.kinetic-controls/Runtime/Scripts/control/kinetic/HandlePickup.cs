@@ -1,4 +1,4 @@
-﻿using moe.nikky.kinetic_controls.attribute;
+﻿using moe.nikky.common;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.Serialization;

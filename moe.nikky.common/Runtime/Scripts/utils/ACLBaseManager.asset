@@ -12,15 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: ACLBaseManager
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 504d17db8ce7a5744be49f7eabe4e0c3, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 32781ea5f6136c748872e6b35fca1778, type: 2}
   udonAssembly: 
   assemblyError: 
-  sourceCsScript: {fileID: 11500000, guid: 34f8ea42f2475914a803266b70db0e5b, type: 3}
+  sourceCsScript: {fileID: 11500000, guid: c0da6a7a0b20ddb40a3a911adc614b82, type: 3}
   scriptVersion: 2
   compiledVersion: 2
   behaviourSyncMode: 1
   hasInteractEvent: 0
-  scriptID: -6271674982755873867
+  scriptID: 4333758350927705908
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -1028,7 +1028,7 @@ MonoBehaviour:
       Data: 54|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: nikkyai.common.BoolDriver[], moe.nikky.kinetic-controls
+      Data: moe.nikky.common.BoolDriver[], moe.nikky.common
     - Name: 
       Entry: 8
       Data: 
@@ -1154,7 +1154,7 @@ MonoBehaviour:
       Data: 63|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: nikkyai.common.ACLBase[], moe.nikky.kinetic-controls
+      Data: moe.nikky.common.ACLBase[], moe.nikky.common
     - Name: 
       Entry: 8
       Data: 

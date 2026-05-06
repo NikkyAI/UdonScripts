@@ -34,7 +34,7 @@ jobs:
         package-name:
         - 'moe.nikky.common'
         - 'moe.nikky.kinetic-controls'
-        - 'moe.nikky.kinetic-controls-audiolink'
+        - 'moe.nikky.kinetic-controls.audiolink'
     steps:
     - id: 'step-0'
       name: 'Check out'

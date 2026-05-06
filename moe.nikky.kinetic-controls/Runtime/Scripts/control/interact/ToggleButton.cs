@@ -1,10 +1,6 @@
-﻿using System.ComponentModel;
-using JetBrains.Annotations;
-using moe.nikky.kinetic_controls.common;
-using moe.nikky.kinetic_controls.attribute;
+﻿using JetBrains.Annotations;
+using moe.nikky.common;
 using moe.nikky.kinetic_controls.Editor;
-using moe.nikky.kinetic_controls.extensions;
-using Texel;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -28,7 +24,7 @@ namespace moe.nikky.kinetic_controls.control.interact
         private bool synced = true;
 
         [Header("Toggle - MIDI - Requires VRC_MidiListener Component")] //
-        [SerializeField, Description("Requires a VRC MIDI Listened with NoteOn enabled")]
+        [SerializeField, Tooltip("Requires a VRC MIDI Listened with NoteOn enabled")]
         protected bool midiEnabled = true;
         [SerializeField, Range(0,15)]
         protected int midiChannel = 0;
@@ -82,7 +78,7 @@ namespace moe.nikky.kinetic_controls.control.interact
         }
 
         [SerializeField]
-        [attribute.ReadOnly]
+        [ReadOnly]
         private BoolDriver[] valueBoolDrivers = { };
 
         void Start()

@@ -10,6 +10,7 @@
     "com.texelsaur.misc",
     "Unity.TextMeshPro",
     "Unity.Postprocessing.Runtime",
+    "moe.nikky.common",
     "AudioLink"
   ],
   "includePlatforms": [],

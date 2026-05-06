@@ -2,9 +2,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
-using moe.nikky.kinetic_controls.attribute;
-using moe.nikky.kinetic_controls.common;
-using moe.nikky.kinetic_controls.extensions;
+using moe.nikky.common;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.Serialization;

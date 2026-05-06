@@ -1,8 +1,7 @@
 ﻿#define READONLY
 
-using moe.nikky.kinetic_controls.attribute;
+using moe.nikky.common;
 using moe.nikky.kinetic_controls.Editor;
-using moe.nikky.kinetic_controls.Kinetic_Controls;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.Serialization;

@@ -1,4 +1,4 @@
-﻿using moe.nikky.kinetic_controls.common;
+﻿using moe.nikky.common;
 using moe.nikky.kinetic_controls.control;
 using UnityEngine;
 using UnityEngine.Serialization;

@@ -20,7 +20,7 @@ MonoBehaviour:
   compiledVersion: 2
   behaviourSyncMode: 1
   hasInteractEvent: 1
-  scriptID: 2151214872086517302
+  scriptID: -7139736312377990211
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -1028,7 +1028,7 @@ MonoBehaviour:
       Data: 54|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: nikkyai.common.BoolDriver[], moe.nikky.kinetic-controls
+      Data: moe.nikky.common.BoolDriver[], moe.nikky.common
     - Name: 
       Entry: 8
       Data: 
@@ -1136,7 +1136,10 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: 63|System.ComponentModel.DescriptionAttribute, System
+      Data: 63|UnityEngine.TooltipAttribute, UnityEngine.CoreModule
+    - Name: tooltip
+      Entry: 1
+      Data: Requires a VRC MIDI Listened with NoteOn enabled
     - Name: 
       Entry: 8
       Data: 
@@ -1451,7 +1454,7 @@ MonoBehaviour:
       Data: 84|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: nikkyai.common.TriggerDriver[], moe.nikky.kinetic-controls
+      Data: moe.nikky.common.TriggerDriver[], moe.nikky.common
     - Name: 
       Entry: 8
       Data: 

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using JetBrains.Annotations;
-using moe.nikky.kinetic_controls.common;
-using moe.nikky.kinetic_controls.Utils;
+using moe.nikky.common;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.Serialization;

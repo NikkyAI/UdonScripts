@@ -1,6 +1,6 @@
 ﻿using System;
 using JetBrains.Annotations;
-using moe.nikky.kinetic_controls.common;
+using moe.nikky.common;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;

@@ -1,7 +1,6 @@
 ﻿using System;
-using moe.nikky.kinetic_controls.common;
+using moe.nikky.common;
 using moe.nikky.kinetic_controls.control.headless;
-using moe.nikky.kinetic_controls.extensions;
 using UnityEngine;
 
 namespace moe.nikky.kinetic_controls.driver.control.headless
