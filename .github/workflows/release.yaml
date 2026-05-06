@@ -61,24 +61,24 @@ jobs:
         echo "zipFile=${{ matrix.package-name }}-${{ steps.step-1.outputs.value }}".zip >> $GITHUB_ENV
         echo "unityPackage=${{ matrix.package-name }}-${{ steps.step-1.outputs.value }}.unitypackage" >> $GITHUB_ENV
         echo "version=${{ steps.step-1.outputs.value }}" >> $GITHUB_ENV
-      if: '${{ steps.step-3.outputs.exists }} == ''false'''
+      if: '${{ {{ steps.step-3.outputs.exists }} == ''false'' }}'
     - id: 'step-5'
       name: 'Create Package Zip'
       run: 'zip -r "${{ github.workspace }}/${{ env.zipFile }}" .'
-      if: '${{ steps.step-3.outputs.exists }} == ''false'''
+      if: '${{ {{ steps.step-3.outputs.exists }} == ''false'' }}'
     - id: 'step-6'
       name: 'Create UnityPackage'
       uses: 'pCYSl5EDgo/create-unitypackage@v1.2.3'
       with:
         package-path: '${{ env.unityPackage }}'
         include-files: 'metaList'
-      if: '${{ steps.step-3.outputs.exists }} == ''false'''
+      if: '${{ {{ steps.step-3.outputs.exists }} == ''false'' }}'
     - id: 'step-7'
       name: 'Create Tag'
       uses: 'rickstaa/action-create-tag@v1.7.2'
       with:
         tag: 'steps.step-2.outputs.tag'
-      if: '${{ steps.step-3.outputs.exists }} == ''false'''
+      if: '${{ {{ steps.step-3.outputs.exists }} == ''false'' }}'
     - id: 'step-8'
       name: 'Make Release'
       uses: 'softprops/action-gh-release@v2'
@@ -88,7 +88,7 @@ jobs:
           ${{ env.zipFile }}
           ${{ env.unityPackage }}
           ${{ matrix.package-name }}/package.json
-      if: '${{ steps.step-3.outputs.exists }} == ''false'''
+      if: '${{ {{ steps.step-3.outputs.exists }} == ''false'' }}'
     - id: 'step-9'
       name: 'Trigger Workflow'
       env:

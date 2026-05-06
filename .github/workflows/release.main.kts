@@ -81,7 +81,7 @@ workflow(
             ),
         )
 
-        val tagDoesNotExist = "${expr { checkTag.outputs.exists }} == 'false'"
+        val tagDoesNotExist = expr("${expr { checkTag.outputs.exists }} == 'false'")
 
         run(
             condition = tagDoesNotExist,
