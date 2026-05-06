@@ -47,8 +47,8 @@ workflow(
         strategyMatrix = mapOf(
             "package-name" to listOf(
                 "moe.nikky.common",
-                "moe.nikky.kinetic_controls",
-                "moe.nikky.kinetic_controls_audiolink",
+                "moe.nikky.kinetic-controls",
+                "moe.nikky.kinetic-controls-audiolink",
             )
         ),
         env = mapOf(

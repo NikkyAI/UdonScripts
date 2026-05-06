@@ -30,8 +30,8 @@ jobs:
       matrix:
         package-name:
         - 'moe.nikky.common'
-        - 'moe.nikky.kinetic_controls'
-        - 'moe.nikky.kinetic_controls_audiolink'
+        - 'moe.nikky.kinetic-controls'
+        - 'moe.nikky.kinetic-controls-audiolink'
     steps:
     - id: 'step-0'
       name: 'Check out'
