@@ -120,7 +120,7 @@ workflow(
                 echo "tag=${PACKAGE#moe.nikky.}-$${expr { versionStep.outputs.value }}" >> $GITHUB_OUTPUT
             """.trimIndent()
         )
-        val combinedTag = computeTag.outputs["tag"]
+        val combinedTag = expr(computeTag.outputs["tag"])
 
         val checkTag = uses(
             name = "Check Tag exists",
