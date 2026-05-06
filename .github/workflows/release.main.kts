@@ -233,7 +233,7 @@ class DetectDirectoryChanges(
 // https://github.com/marketplace/actions/tag-exists-action
 class TagExistsAction(
     private val tag: String,
-) : RegularAction<TagExistsAction.Outputs>("mukunku", "tag-exists-action", "v1.7") {
+) : RegularAction<TagExistsAction.Outputs>("mukunku", "tag-exists-action", "v1.7.0") {
     override fun toYamlArguments() =
         linkedMapOf(
             "tag" to tag,
