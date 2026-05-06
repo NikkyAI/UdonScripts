@@ -29,56 +29,56 @@ workflow(
         Push()
     ),
     sourceFile = __FILE__,
-    consistencyCheckJobConfig = ConsistencyCheckJobConfig.Disabled,
+//    consistencyCheckJobConfig = ConsistencyCheckJobConfig.Disabled,
 ) {
 //    job(id = "config", runsOn = UbuntuLatest) {
 //        uses(name = "Check out", action = Checkout())
 //        run(name = "Print greeting", command = "echo 'Hello world!'")
 //    }
-    val checkConsistency = job(
-        name = "Check YAML consistency",
-        id = "check_yaml_consistency",
-        runsOn = UbuntuLatest,
-        concurrency = Concurrency(
-            group = "consistency",
-            cancelInProgress = true
-        ),
-    ) {
-        uses(
-            name = "Check out",
-            action = Checkout(),
-        )
-        run(
-            name = "Execute script",
-            command = """
-                rm '.github/workflows/release.yaml' && '.github/workflows/release.main.kts'
-            """.trimIndent()
-        )
-        run(
-            name = "Consistency check",
-            command = """
-                git diff --exit-code '.github/workflows/release.yaml'
-            """.trimIndent()
-        )
-        //  check_yaml_consistency:
-        //    name: ''
-        //    runs-on: 'ubuntu-latest'
-        //    steps:
-        //    - id: 'step-0'
-        //      name: 'Check out'
-        //      uses: 'actions/checkout@v4'
-        //    - id: 'step-1'
-        //      name: 'Execute script'
-        //      run: 'rm ''.github/workflows/release.yaml'' && ''.github/workflows/release.main.kts'''
-        //    - id: 'step-2'
-        //      name: 'Consistency check'
-        //      run: 'git diff --exit-code ''.github/workflows/release.yaml'''
-    }
+//    val checkConsistency = job(
+//        name = "Check YAML consistency",
+//        id = "check_yaml_consistency",
+//        runsOn = UbuntuLatest,
+//        concurrency = Concurrency(
+//            group = "consistency",
+//            cancelInProgress = true
+//        ),
+//    ) {
+//        uses(
+//            name = "Check out",
+//            action = Checkout(),
+//        )
+//        run(
+//            name = "Execute script",
+//            command = """
+//                rm '.github/workflows/release.yaml' && '.github/workflows/release.main.kts'
+//            """.trimIndent()
+//        )
+//        run(
+//            name = "Consistency check",
+//            command = """
+//                git diff --exit-code '.github/workflows/release.yaml'
+//            """.trimIndent()
+//        )
+//        //  check_yaml_consistency:
+//        //    name: ''
+//        //    runs-on: 'ubuntu-latest'
+//        //    steps:
+//        //    - id: 'step-0'
+//        //      name: 'Check out'
+//        //      uses: 'actions/checkout@v4'
+//        //    - id: 'step-1'
+//        //      name: 'Execute script'
+//        //      run: 'rm ''.github/workflows/release.yaml'' && ''.github/workflows/release.main.kts'''
+//        //    - id: 'step-2'
+//        //      name: 'Consistency check'
+//        //      run: 'git diff --exit-code ''.github/workflows/release.yaml'''
+//    }
 
-    job(
+    val build = job(
         id = "build",
         runsOn = UbuntuLatest,
-        needs = listOf(checkConsistency),
+//        needs = listOf(checkConsistency),
 //        outputs =
 //            object : JobOutputs() {
 //                var tagCommon by output()
@@ -203,7 +203,13 @@ workflow(
                 tagName = combinedTag,
             )
         )
+    }
 
+    job(
+        id = "build-done",
+        runsOn = UbuntuLatest,
+        needs = listOf(build),
+    ) {
         run(
             name = "Trigger Workflow",
             env = mapOf(
@@ -216,31 +222,7 @@ workflow(
                 gh workflow run $WORKFLOW --repo=$REPO --ref=$REF
             """.trimIndent()
         )
-
-
-//        uses(
-//            name = "",
-//            action = DetectDirectoryChanges(
-//                includedPaths = listOf(
-//                    "moe.nikky.kinetic_controls"
-//                ),
-//                ifThesePathsChangeReturnAllIncludedPaths = listOf(
-//                    ".github/workflows"
-//                )
-//            )
-//        )
-        // jobOutputs.changedKinecticControls = someStep.outputs.changed
-
     }
-
-//    job(
-//        id = "build",
-//        runsOn = UbuntuLatest,
-//        condition = "",
-//    ) {
-//        uses(name = "Check out", action = Checkout())
-//        run(name = "Print greeting", command = "echo 'Hello world!'")
-//    }
 }
 
 // https://github.com/marketplace/actions/detect-directory-changes
