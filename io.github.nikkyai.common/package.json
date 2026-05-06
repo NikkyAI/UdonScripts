@@ -1,0 +1,19 @@
+{
+  "name": "moe.nikky.common",
+  "displayName": "CommonDependencies",
+  "version": "0.1.0-dev.1",
+  "description": "shared dependencies for other packages",
+  "changelogUrl": "https://github.com/NikkyAI/Kinetic-Controls/releases",
+  "gitDependencies": {},
+  "vpmDependencies": {
+    "com.texelsaur.access": "^1.2.4",
+    "com.texelsaur.misc": "^1.0.5"
+  },
+  "author": {
+    "name": "NikkyAI",
+    "email": "",
+    "url": "https://github.com/NikkyAI"
+  },
+  "legacyFolders": {},
+  "legacyFiles": {}
+}
