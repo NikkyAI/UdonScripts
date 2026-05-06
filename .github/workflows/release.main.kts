@@ -9,6 +9,7 @@
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.softprops.ActionGhRelease
+import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
 import io.github.typesafegithub.workflows.domain.Shell
 import io.github.typesafegithub.workflows.domain.actions.Action
@@ -18,6 +19,7 @@ import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.domain.triggers.WorkflowDispatch
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
+import io.github.typesafegithub.workflows.yaml.ConsistencyCheckJobConfig
 
 
 workflow(
@@ -27,16 +29,56 @@ workflow(
         Push()
     ),
     sourceFile = __FILE__,
-
-    ) {
+    consistencyCheckJobConfig = ConsistencyCheckJobConfig.Disabled,
+) {
 //    job(id = "config", runsOn = UbuntuLatest) {
 //        uses(name = "Check out", action = Checkout())
 //        run(name = "Print greeting", command = "echo 'Hello world!'")
 //    }
+    val checkConsistency = job(
+        name = "Check YAML consistency",
+        id = "check_yaml_consistency",
+        runsOn = UbuntuLatest,
+        concurrency = Concurrency(
+            group = "consistency",
+            cancelInProgress = true
+        ),
+    ) {
+        uses(
+            name = "Check out",
+            action = Checkout(),
+        )
+        run(
+            name = "Execute script",
+            command = """
+                rm '.github/workflows/release.yaml' && '.github/workflows/release.main.kts'
+            """.trimIndent()
+        )
+        run(
+            name = "Consistency check",
+            command = """
+                git diff --exit-code '.github/workflows/release.yaml'
+            """.trimIndent()
+        )
+        //  check_yaml_consistency:
+        //    name: ''
+        //    runs-on: 'ubuntu-latest'
+        //    steps:
+        //    - id: 'step-0'
+        //      name: 'Check out'
+        //      uses: 'actions/checkout@v4'
+        //    - id: 'step-1'
+        //      name: 'Execute script'
+        //      run: 'rm ''.github/workflows/release.yaml'' && ''.github/workflows/release.main.kts'''
+        //    - id: 'step-2'
+        //      name: 'Consistency check'
+        //      run: 'git diff --exit-code ''.github/workflows/release.yaml'''
+    }
 
     job(
         id = "build",
         runsOn = UbuntuLatest,
+        needs = listOf(checkConsistency),
 //        outputs =
 //            object : JobOutputs() {
 //                var tagCommon by output()
@@ -53,9 +95,13 @@ workflow(
         ),
         env = mapOf(
             "packagePath" to expr("matrix.package-name")
+        ),
+        concurrency = Concurrency(
+            group = "${expr {github.ref}}-${expr("matrix.package-name")}",
         )
     ) {
         val packageName = expr("matrix.package-name")
+        val packagePath = packageName
         val packageJsonPath = "$packageName/package.json"
         uses(name = "Check out", action = Checkout(fetchTags = true))
 
@@ -83,7 +129,7 @@ workflow(
             ),
         )
 
-        val tagDoesNotExist ="${checkTag.outputs.exists} == 'false'"
+        val tagDoesNotExist = "${checkTag.outputs.exists} == 'false'"
 
         run(
             condition = tagDoesNotExist,
@@ -101,6 +147,16 @@ workflow(
             //TODO: use outputs of previous step ?
             command = $$"""
                 zip -r "${{ github.workspace }}/${{ env.zipFile }}" .
+            """.trimIndent()
+        )
+
+        run(
+
+            condition = tagDoesNotExist,
+            name = "Track Package Meta Files",
+            //TODO: use outputs of previous step ?
+            command = $$"""
+                find "$$packagePath/" -name \*.meta >> metaList
             """.trimIndent()
         )
 
@@ -133,27 +189,6 @@ workflow(
                 )
             )
         )
-
-//        uses(
-//            condition = tagDoesNotExist,
-//            name = "Make Release",
-//            //TODO: use outputs of previous step instead of env?
-//            action = CustomAction(
-//                actionOwner = "softprops",
-//                actionName = "action-gh-release",
-//                actionVersion = "v3.0.0",
-//                inputs = mapOf(
-////                    "tag" to expr("env.version"),
-//                    "files" to """|
-//                        ${expr("env.zipFile")}
-//                        ${expr("env.unityPackage")}
-//                        $packageJsonPath
-//                    """.trimIndent(),
-////                    "tag_name" to expr("env.unityPackage"),
-//                    "tag_name" to combinedTag,
-//                )
-//            )
-//        )
 
         uses(
             condition = tagDoesNotExist,
