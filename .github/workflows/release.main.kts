@@ -11,7 +11,6 @@ import io.github.typesafegithub.workflows.actions.actions.Checkout
 import io.github.typesafegithub.workflows.actions.softprops.ActionGhRelease
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
-import io.github.typesafegithub.workflows.domain.Shell
 import io.github.typesafegithub.workflows.domain.actions.Action
 import io.github.typesafegithub.workflows.domain.actions.CustomAction
 import io.github.typesafegithub.workflows.domain.actions.RegularAction
@@ -19,7 +18,6 @@ import io.github.typesafegithub.workflows.domain.triggers.Push
 import io.github.typesafegithub.workflows.domain.triggers.WorkflowDispatch
 import io.github.typesafegithub.workflows.dsl.expressions.expr
 import io.github.typesafegithub.workflows.dsl.workflow
-import io.github.typesafegithub.workflows.yaml.ConsistencyCheckJobConfig
 
 
 workflow(
@@ -31,27 +29,31 @@ workflow(
     sourceFile = __FILE__,
 //    consistencyCheckJobConfig = ConsistencyCheckJobConfig.Disabled,
 ) {
+    val pkgNameKey = "package-name"
+    val packageName = expr("matrix.$pkgNameKey")
+    val pkgPrefix = "moe.nikky."
     val build = job(
         id = "build",
         runsOn = UbuntuLatest,
         strategyMatrix = mapOf(
-            "package-name" to listOf(
+            pkgNameKey to listOf(
                 "moe.nikky.common",
                 "moe.nikky.kinetic-controls",
                 "moe.nikky.kinetic-controls.audiolink",
             )
         ),
         env = mapOf(
-            "packagePath" to expr("matrix.package-name")
+            "packagePath" to packageName
         ),
         concurrency = Concurrency(
-            group = "${expr {github.ref}}-${expr("matrix.package-name")}",
+            group = "${expr {github.ref}}-$packageName",
+            cancelInProgress = false,
         )
     ) {
-        val packageName = expr("matrix.package-name")
         val packagePath = packageName
         val packageJsonPath = "$packageName/package.json"
-        uses(name = "Check out", action = Checkout(fetchTags = true))
+
+        uses(name = "Check out", action = Checkout())
 
         val versionStep = uses(
             name = "get version from package.json",
@@ -60,20 +62,26 @@ workflow(
                 prop_path = "version"
             )
         )
-        val computeTag = run(
-            name = "compute tag",
-            shell = Shell.Bash,
+        val version = expr { versionStep.outputs.value }
+
+        val variablesStep = run(
+            name = "precompute variables",
             command = $$"""
-                PACKAGE=$$packageName
-                echo "tag=${PACKAGE#moe.nikky.}-$${expr { versionStep.outputs.value }}" >> $GITHUB_OUTPUT
+                FULL_PACKAGE=$$packageName
+                SHORT_PACKAGE=${FULL_PACKAGE#$$pkgPrefix}
+                echo "tag=$SHORT_PACKAGE-$$version" >> $GITHUB_OUTPUT
+                echo "zipFile=$SHORT_PACKAGE-$$version".zip >> $GITHUB_OUTPUT
+                echo "unityPackage=$SHORT_PACKAGE-$$version".unitypackage >> $GITHUB_OUTPUT
             """.trimIndent()
         )
-        val combinedTag = expr(computeTag.outputs["tag"])
+        val tag = expr(variablesStep.outputs["tag"])
+        val zipFile = expr(variablesStep.outputs["zipFile"])
+        val unityPackage = expr(variablesStep.outputs["unityPackage"])
 
         val checkTag = uses(
             name = "Check Tag exists",
             action = TagExistsAction(
-                tag = combinedTag
+                tag = tag
             ),
         )
 
@@ -81,45 +89,34 @@ workflow(
 
         run(
             condition = tagDoesNotExist,
-            name = "Set Environment Variables",
-            command = $$"""
-                echo "zipFile=$$packageName-$${expr { versionStep.outputs.value }}".zip >> $GITHUB_ENV
-                echo "unityPackage=$$packageName-$${expr { versionStep.outputs.value }}.unitypackage" >> $GITHUB_ENV
-                echo "version=$${expr { versionStep.outputs.value }}" >> $GITHUB_ENV
-            """.trimIndent()
-        )
-
-        run(
-            condition = tagDoesNotExist,
             name = "Create Package Zip",
-            //TODO: use outputs of previous step ?
             workingDirectory = packagePath,
             command = $$"""
-                zip -r "$${expr { github.workspace }}/$${expr("env.zipFile")}" .
+                zip -r "$${expr { github.workspace }}/$$zipFile" .
             """.trimIndent()
         )
 
-        run(
+        val metaListFile = "metaList-$packageName"
 
+        run(
             condition = tagDoesNotExist,
             name = "Track Package Meta Files",
-            //TODO: use outputs of previous step ?
             command = $$"""
-                find "$$packagePath/" -name \*.meta >> metaList
+                find "$$packagePath/" -name \*.meta >> $$metaListFile
             """.trimIndent()
         )
 
         uses(
             condition = tagDoesNotExist,
             name = "Create UnityPackage",
-            //TODO: use outputs of previous step ?
             action = CustomAction(
                 actionOwner = "pCYSl5EDgo",
                 actionName = "create-unitypackage",
                 actionVersion = "v1.2.3",
                 inputs = mapOf(
-                    "package-path" to expr("env.unityPackage"),
-                    "include-files" to "metaList"
+//                    "package-path" to expr("env.unityPackage"),
+                    "package-path" to unityPackage,
+                    "include-files" to metaListFile
                 )
             )
         )
@@ -127,14 +124,13 @@ workflow(
         uses(
             condition = tagDoesNotExist,
             name = "Create Tag",
-            //TODO: use outputs of previous step instead of env ?
             action = CustomAction(
                 actionOwner = "rickstaa",
                 actionName = "action-create-tag",
                 actionVersion = "v1.7.2",
                 inputs = mapOf(
 //                    "tag" to expr("env.version"),
-                    "tag" to combinedTag,
+                    "tag" to tag,
                 )
             )
         )
@@ -142,14 +138,15 @@ workflow(
         uses(
             condition = tagDoesNotExist,
             name = "Make Release",
-            //TODO: use outputs of previous step instead of env?
             action = ActionGhRelease(
                 files = listOf(
-                    expr("env.zipFile"),
-                    expr("env.unityPackage"),
+//                    expr("env.zipFile"),
+//                    expr("env.unityPackage"),
+                    zipFile,
+                    unityPackage,
                     packageJsonPath,
                 ),
-                tagName = combinedTag,
+                tagName = tag,
             )
         )
     }
