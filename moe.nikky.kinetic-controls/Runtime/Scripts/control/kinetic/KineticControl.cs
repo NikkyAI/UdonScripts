@@ -1,6 +1,5 @@
 ﻿#define READONLY
 
-using System;
 using moe.nikky.common;
 using UdonSharp;
 using UnityEngine;
@@ -12,7 +11,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
 {
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
     // [RequireComponent(typeof(VRCMidiListener))]
-    public abstract class BaseKineticControl : BaseSmoothedControl
+    public abstract class KineticControl : SmoothedControl
     {
         [Header("Kinetic Control")] //
 
@@ -62,7 +61,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
 #endif
         internal Transform debugDesktopRaytrace;
 
-        public override bool Synced
+        public override bool NetworkSynced
         {
             get => synced;
             set

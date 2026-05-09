@@ -6,8 +6,7 @@
     "VRC.SDKBase",
     "VRC.Udon",
     "UdonSharp.Runtime",
-    "com.texelsaur.common",
-    "com.texelsaur.misc"
+    "com.texelsaur.common"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

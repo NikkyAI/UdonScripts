@@ -6,7 +6,6 @@ using VRC.SDKBase;
 namespace moe.nikky.common.Editor
 {
     [ExecuteAlways]
-    [RequireComponent(typeof(BaseBehaviour))]
     public class PreProcessEditorHelper: MonoBehaviour, IEditorOnly, IPreprocessCallbackBehaviour
     {
         [Tooltip("This component ensures that OnPreprocess runs on other components in the same object at build time")]
@@ -21,7 +20,6 @@ namespace moe.nikky.common.Editor
 
         public void DoPreprocess()
         {
-            
             var behaviours = GetComponents<BaseBehaviour>();
             foreach (var behaviour in behaviours)
             {

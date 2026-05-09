@@ -1,8 +1,6 @@
 ﻿using moe.nikky.common;
-using moe.nikky.common;
-using moe.nikky.kinetic_controls.Editor;
+using moe.nikky.common.Editor;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VRC;
 using VRC.SDKBase;
 

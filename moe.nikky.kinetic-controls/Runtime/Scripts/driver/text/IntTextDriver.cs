@@ -42,68 +42,40 @@ namespace moe.nikky.kinetic_controls.driver.text
                 textMeshPro.text = value.ToString(valueDisplayFormat);
             }
         }
-        
+
+        private int _cachedValue = int.MinValue;
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-        // protected override int ValidationHash => HashCode.Combine(base.GetHashCode(), valueDisplayFormat, cachedValue);
-        //
-        // public override void OnValidateApplyValues()
-        // {
-        //     if (Application.isPlaying) return;
-        //     base.OnValidateApplyValues();
-        //
-        //     if(cachedValue == int.MinValue) return;
-        //     
-        //     OnUpdateInt(cachedValue);
-        //     if (textMeshPro)
-        //     {
-        //         textMeshPro.MarkDirty();
-        //     }
-        // }
 
         protected override void OnValidate()
         {
             if(!Application.isPlaying) return;
             base.OnValidate();
 
-            if (cachedValue == int.MinValue) return;
+            if (_cachedValue == int.MinValue) return;
             
             if (
                 ValidationCache.ShouldRunValidation(
                     this,
                     HashCode.Combine(
                         valueDisplayFormat,
-                        cachedValue
+                        _cachedValue
                     )
                 )
             )
             {
-                OnUpdateInt(cachedValue);
+                OnUpdateInt(_cachedValue);
             }
         }
+        protected override bool UpdateInEditor => true;
 
-        
-        // [ContextMenu("Update UI")]
-        // protected override void OnValidate()
-        // {
-        //     base.OnValidate();
-        //     if (Application.isPlaying) return;
-        //     UnityEditor.EditorUtility.SetDirty(this);
-        //
-        //     if (valueDisplayFormat != prevFormat && !float.IsNaN(cachedValue))
-        //     {
-        //         
-        //         prevFormat = valueDisplayFormat;
-        //     }
-        // }
-        //
-        public override void ApplyIntValue(int value)
+        protected override void EditorUpdateIntValue(int value)
         {
             OnUpdateInt(value);
-            cachedValue = value;
             if (textMeshPro)
             {
                 textMeshPro.MarkDirty();
             }
+            _cachedValue = value;
         }
 #endif
     }

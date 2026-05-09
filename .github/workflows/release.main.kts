@@ -5,9 +5,14 @@
 
 @file:Repository("https://bindings.krzeminski.it")
 @file:DependsOn("actions:checkout:v4")
+@file:DependsOn("mukunku:tag-exists-action:v1.7.0")
+@file:DependsOn("zoexx:github-action-json-file-properties:1.0.6")
+//@file:DependsOn("tchupp:actions-detect-directory-changes:v1")
 @file:DependsOn("softprops:action-gh-release:v2")
 
 import io.github.typesafegithub.workflows.actions.actions.Checkout
+import io.github.typesafegithub.workflows.actions.zoexx.GithubActionJsonFileProperties_Untyped
+import io.github.typesafegithub.workflows.actions.mukunku.TagExistsAction_Untyped
 import io.github.typesafegithub.workflows.actions.softprops.ActionGhRelease
 import io.github.typesafegithub.workflows.domain.Concurrency
 import io.github.typesafegithub.workflows.domain.RunnerType.UbuntuLatest
@@ -46,7 +51,7 @@ workflow(
             "packagePath" to packageName
         ),
         concurrency = Concurrency(
-            group = "${expr {github.ref}}-$packageName",
+            group = "${expr { github.ref }}-$packageName",
             cancelInProgress = false,
         )
     ) {
@@ -55,14 +60,22 @@ workflow(
 
         uses(name = "Check out", action = Checkout())
 
+        // run version resolver here
+        run(
+            name = "updated versions",
+            command = """
+                ./updateVersions.main.kts
+            """.trimIndent()
+        )
+
         val versionStep = uses(
             name = "get version from package.json",
-            action = JsonFileProperties(
-                file_path = packageJsonPath,
-                prop_path = "version"
+            action = GithubActionJsonFileProperties_Untyped(
+                filePath_Untyped = packageJsonPath,
+                propPath_Untyped = "version"
             )
         )
-        val version = expr { versionStep.outputs.value }
+        val version = expr { versionStep.outputs["value"] }
 
         val variablesStep = run(
             name = "precompute variables",
@@ -80,8 +93,9 @@ workflow(
 
         val checkTag = uses(
             name = "Check Tag exists",
-            action = TagExistsAction(
-                tag = tag
+            action = TagExistsAction_Untyped(
+                tag_Untyped = tag,
+//                tag = tag
             ),
         )
 

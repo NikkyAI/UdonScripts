@@ -6,25 +6,25 @@ using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.driver.control.kinetic
 {
-    public class TriggerResetFader : TriggerDriver
+    public class TriggerResetControl : TriggerDriver
     {
-        [FormerlySerializedAs("_smoothedBehaviours")] //
-        [SerializeField] private BaseSmoothedControl[] smoothedBehaviours = { };
+        [FormerlySerializedAs("smoothedBehaviours")]//
+        [SerializeField] private SmoothedControl[] smoothedControls = { };
 
         void Start()
         {
             _EnsureInit();
         }
 
-        protected override string LogPrefix => nameof(TriggerResetFader);
+        protected override string LogPrefix => nameof(TriggerResetControl);
 
         public override void OnTrigger()
         {
             if (!enabled) return;
             Log("triggered reset");
-            for (var i = 0; i < smoothedBehaviours.Length; i++)
+            for (var i = 0; i < smoothedControls.Length; i++)
             {
-                var behaviour = smoothedBehaviours[i];
+                var behaviour = smoothedControls[i];
                 if (Utilities.IsValid(behaviour))
                 { 
                     Log($"resetting {behaviour.name}");

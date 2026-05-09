@@ -3,9 +3,7 @@
 using moe.nikky.common;
 using moe.nikky.kinetic_controls.Editor;
 using UdonSharp;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VRC;
 using VRC.SDKBase;
 
@@ -18,7 +16,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
     [RequireComponent(typeof(FaderEditorHelper))]
 #endif
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
-    public class Fader : BaseKineticControl
+    public class Fader : KineticControl
     {
         [Header("Fader")] // header
         [SerializeField]

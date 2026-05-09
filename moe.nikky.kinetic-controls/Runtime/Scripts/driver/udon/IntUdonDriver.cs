@@ -1,5 +1,4 @@
-﻿
-using moe.nikky.common;
+﻿using moe.nikky.common;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -11,10 +10,8 @@ public class IntUdonDriver : IntDriver
     [SerializeField]
     private UdonBehaviour[] externalBehaviours;
 
-    [SerializeField]
-    private string intField;
-    [SerializeField]
-    private string eventName;
+    [SerializeField] private string intField;
+    [SerializeField] private string eventName;
 
     protected override string LogPrefix => nameof(IntUdonDriver);
 
@@ -48,10 +45,6 @@ public class IntUdonDriver : IntDriver
     }
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-    public override void ApplyIntValue(int value)
-    {
-        base.ApplyIntValue(value);
-        OnUpdateInt(value);
-    }
+    protected override bool UpdateInEditor => true;
 #endif
 }

@@ -1,11 +1,10 @@
-﻿using moe.nikky.common;
+﻿using System;
 using moe.nikky.common;
-using moe.nikky.kinetic_controls.Editor;
+using moe.nikky.common.Editor;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.Serialization;
 using VRC;
-using VRC.SDK3.UdonNetworkCalling;
 using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.control.interact
@@ -16,8 +15,9 @@ namespace moe.nikky.kinetic_controls.control.interact
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class TriggerButton : ACLBaseSimple
     {
-        [Header("Trigger - MIDI - Requires VRC_MidiListener Component")] //
-        [SerializeField, Tooltip("Requires a VRC MIDI Listened with NoteOn enabled")]
+        [Header("Trigger - MIDI - Requires VRC_MidiListener Component with NoteOn")] //
+        [Tooltip("Requires a VRC MIDI Listened with NoteOn enabled")]
+        [SerializeField]
         protected bool midiEnabled = true;
         [SerializeField, Range(0,15)]
         protected int midiChannel = 0;
@@ -27,15 +27,16 @@ namespace moe.nikky.kinetic_controls.control.interact
         protected int midiMinVelocity = 127;
 
         [Header("Drivers")] // header
-        [FormerlySerializedAs("triggerDriversObj")]
+        [FormerlySerializedAs("triggerDrivers")]
         [Tooltip("default: self")]
-        [SerializeField] private GameObject triggerDrivers;
+        [SerializeField] private GameObject triggerDriverSource;
 
         protected override string LogPrefix => nameof(TriggerButton);
     
+        [FormerlySerializedAs("triggerDriversReadonly")]
         [SerializeField] 
         [ReadOnly]
-        private TriggerDriver[] triggerDriversReadonly = { };
+        private TriggerDriver[] _triggerDrivers = { };
 
         void Start()
         {
@@ -63,9 +64,9 @@ namespace moe.nikky.kinetic_controls.control.interact
         {
             if (!IsAuthorized) return;
             Log("Trigger executing");
-            for (var i = 0; i < triggerDriversReadonly.Length; i++)
+            for (var i = 0; i < _triggerDrivers.Length; i++)
             {
-                triggerDriversReadonly[i].OnTrigger();
+                _triggerDrivers[i].OnTrigger();
             }
         }
         //TODO: call network event on trigger ?
@@ -80,9 +81,9 @@ namespace moe.nikky.kinetic_controls.control.interact
             if (channel == midiChannel && number == midiNumber && velocity >= midiMinVelocity)
             {
                 Log("midi triggered");
-                for (var i = 0; i < triggerDriversReadonly.Length; i++)
+                for (var i = 0; i < _triggerDrivers.Length; i++)
                 {
-                    triggerDriversReadonly[i].OnTrigger();
+                    _triggerDrivers[i].OnTrigger();
                 }
             }
         }
@@ -115,13 +116,13 @@ namespace moe.nikky.kinetic_controls.control.interact
             // UnityEditor.EditorUtility.SetDirty(this);
 
             var candidates = gameObject.GetComponentsInChildren<GameObject>();
-            if (triggerDrivers == null)
+            if (triggerDriverSource == null)
             {
                 foreach (var candidate in candidates)
                 {
                     if (candidate.name == "Trigger Drivers")
                     {
-                        triggerDrivers = candidate;
+                        triggerDriverSource = candidate;
                         Log("Found and assigned Trigger Drivers");
                         UnityEditor.EditorUtility.SetDirty(this);
                         break;
@@ -137,17 +138,18 @@ namespace moe.nikky.kinetic_controls.control.interact
         private void FindTriggerDrivers()
         {
             
-            triggerDriversReadonly = triggerDriversReadonly.AddRange(
-                gameObject.GetComponents<TriggerDriver>()
-            );
-            if (Utilities.IsValid(triggerDrivers))
+            _triggerDrivers = Array.Empty<TriggerDriver>();
+            if (Utilities.IsValid(triggerDriverSource))
             {
-                Log($"loading tigger drivers from {triggerDrivers}");
-                triggerDriversReadonly = triggerDriversReadonly.AddRange(
-                        triggerDrivers.GetComponentsInChildren<TriggerDriver>()
-                );
+                Log($"loading tigger drivers from {triggerDriverSource}");
+                _triggerDrivers = triggerDriverSource.GetComponentsInChildren<TriggerDriver>();
             }
-            Log($"Found {triggerDriversReadonly.Length} trigger drivers");
+            else
+            {
+                Log($"loading tigger drivers from {gameObject}");
+                _triggerDrivers = gameObject.GetComponents<TriggerDriver>();
+            }
+            Log($"Found {_triggerDrivers.Length} trigger drivers");
         }
 
         public override bool OnPreprocess()

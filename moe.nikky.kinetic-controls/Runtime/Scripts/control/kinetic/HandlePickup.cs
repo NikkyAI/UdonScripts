@@ -1,7 +1,6 @@
 ﻿using moe.nikky.common;
 using UdonSharp;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VRC.SDK3.Components;
 using VRC.SDKBase;
 

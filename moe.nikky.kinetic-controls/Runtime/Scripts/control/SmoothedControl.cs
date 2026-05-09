@@ -8,7 +8,8 @@ using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.control
 {
-    public abstract class BaseSmoothedControl : ACLBaseReadonly
+    //TODO: rename to TweenControl ?
+    public abstract class SmoothedControl : ACLBaseReadonly
     {
         protected abstract float MinPosOrRot { get; }
 
@@ -36,6 +37,7 @@ namespace moe.nikky.kinetic_controls.control
 #endif
         [Range(0, 1)]
         internal float defaultValueNormalized = 0.25f;
+
         [SerializeField]
 #if READONLY
         [ReadOnly]
@@ -64,8 +66,11 @@ namespace moe.nikky.kinetic_controls.control
         [Obsolete]
         internal GameObject floatSmoothedValueDrivers;
 
-        [SerializeField, ReadOnly, NonReorderable] public FloatDriver[] targetValueFloatDrivers = Array.Empty<FloatDriver>();
-        [SerializeField, ReadOnly, NonReorderable] internal FloatDriver[] smoothedValueFloatDrivers = Array.Empty<FloatDriver>();
+        [SerializeField, ReadOnly, NonReorderable]
+        public FloatDriver[] targetValueFloatDrivers = Array.Empty<FloatDriver>();
+
+        [SerializeField, ReadOnly, NonReorderable]
+        internal FloatDriver[] smoothedValueFloatDrivers = Array.Empty<FloatDriver>();
 
         #endregion
 
@@ -73,7 +78,7 @@ namespace moe.nikky.kinetic_controls.control
 
         [Header("Base Smoothed Control - Smoothing")] // header
         [Tooltip(
-             "smoothes out value updates over time, may impact CPU frametimes AND cause more updates to FloatDrivers")]
+            "smoothes out value updates over time, may impact CPU frametimes AND cause more updates to FloatDrivers")]
         [SerializeField]
 #if READONLY
         [ReadOnly]
@@ -130,9 +135,7 @@ namespace moe.nikky.kinetic_controls.control
         protected float smoothingTargetNormalized;
         protected float smoothedCurrentNormalized;
 
-        [SerializeField]
-        [ReadOnly]
-        internal bool isCyclic = false;
+        [SerializeField] [ReadOnly] internal bool isCyclic = false;
 
         private const float Epsilon = 0.005f;
         private bool _valueInitialized = false;
@@ -142,12 +145,11 @@ namespace moe.nikky.kinetic_controls.control
         #endregion
 
 
-        [UdonSynced]
         // IMPORTANT, DO NOT DELETE
-        protected float SyncedValueNormalized;
+        [UdonSynced] protected float SyncedValueNormalized;
 
-        [UdonSynced] // IMPORTANT, DO NOT DELETE
-        protected bool SyncedIsBeingManipulated;
+        // IMPORTANT, DO NOT DELETE
+        [UdonSynced] protected bool SyncedIsBeingManipulated;
 
         protected abstract void UpdateTargetIndicator(float clampedPosOrRotEuler);
 
@@ -315,7 +317,7 @@ namespace moe.nikky.kinetic_controls.control
                 // }
 
                 var delta = Mathf.Repeat(
-                    smoothingTargetNormalized - smoothedCurrentNormalized, 
+                    smoothingTargetNormalized - smoothedCurrentNormalized,
                     1f
                 );
                 if (delta > 0.5f)
@@ -411,8 +413,10 @@ namespace moe.nikky.kinetic_controls.control
             float target,
             ref float currentVelocity,
             float smoothTime,
-            [System.ComponentModel.DefaultValue("Mathf.Infinity")] float maxSpeed,
-            [System.ComponentModel.DefaultValue("Time.deltaTime")] float deltaTime
+            [System.ComponentModel.DefaultValue("Mathf.Infinity")]
+            float maxSpeed,
+            [System.ComponentModel.DefaultValue("Time.deltaTime")]
+            float deltaTime
         )
         {
             // Based on Game Programming Gems 4 Chapter 1.10

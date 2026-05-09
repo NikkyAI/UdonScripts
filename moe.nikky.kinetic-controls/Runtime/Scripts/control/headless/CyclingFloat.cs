@@ -1,13 +1,17 @@
 ﻿using System;
-using System.ComponentModel;
 using JetBrains.Annotations;
 using moe.nikky.common;
+using moe.nikky.common.Editor;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.Serialization;
+using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.control.headless
 {
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+    [RequireComponent(typeof(PreProcessEditorHelper))]
+#endif
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class CyclingFloat : LoggingSimple
     {
@@ -17,18 +21,23 @@ namespace moe.nikky.kinetic_controls.control.headless
 
         [FormerlySerializedAs("rate")] [Range(-1, 1)]
         public float speed = 0f;
+
         [SerializeField, Range(0f, 1f)] public float minSpeed = 0.05f;
 
         // private float _targetValue = 0f;
-        [SerializeField] private GameObject floatDrivers;
+        [FormerlySerializedAs("floatDrivers")] //
+        [SerializeField]
+        private GameObject floatDriverSource;
+
+        [SerializeField] [ReadOnly] private FloatDriver[] _floatDrivers = { };
 
         private float _smoothedCurrent = 0f;
-        private FloatDriver[] _floatDrivers = { };
 
         [Header("Smoothing")] // header
-        
+
         // [SerializeField, Range(0f, 1f)] public float maxSpeed = 0.25f;
-        [SerializeField, Range(0f, 5f)] public float smoothTime = 0.1f;
+        [SerializeField, Range(0f, 5f)]
+        public float smoothTime = 0.1f;
         //
         // [Tooltip("fraction of the distance covered within roughly 1s"),
         //  SerializeField, Min(0.05f),]
@@ -59,7 +68,7 @@ namespace moe.nikky.kinetic_controls.control.headless
         {
             base._Init();
             _lastTime = Time.time;
-            _floatDrivers = floatDrivers.GetComponentsInChildren<FloatDriver>();
+            // _floatDrivers = floatDriverSource.GetComponentsInChildren<FloatDriver>();
 
             SendCustomEventDelayedFrames(nameof(OnUpdateCyclingValue), smoothingUpdateInterval);
             SendCustomEventDelayedFrames(nameof(PostInitResetValues), 5);
@@ -93,10 +102,12 @@ namespace moe.nikky.kinetic_controls.control.headless
             SendCustomEventDelayedFrames(nameof(OnUpdateCyclingValue), smoothingUpdateInterval);
             UpdateCyclingValue();
         }
-        
-        [UsedImplicitly]
-        public void UpdateCyclingValue() {
+        //TODO: tween every x seconds and just update on callback of virtual float
+        //  keep track of current value and normalize occasionally if possible
 
+        [UsedImplicitly]
+        public void UpdateCyclingValue()
+        {
             var time = Time.time;
             var deltaTime = time - _lastTime;
             _lastTime = time;
@@ -181,8 +192,8 @@ namespace moe.nikky.kinetic_controls.control.headless
             float target,
             ref float currentVelocity,
             float smoothTime,
-            [DefaultValue("Mathf.Infinity")] float maxSpeed,
-            [DefaultValue("Time.deltaTime")] float deltaTime
+            [System.ComponentModel.DefaultValue("Mathf.Infinity")] float maxSpeed,
+            [System.ComponentModel.DefaultValue("Time.deltaTime")] float deltaTime
         )
         {
             // Based on Game Programming Gems 4 Chapter 1.10
@@ -215,37 +226,29 @@ namespace moe.nikky.kinetic_controls.control.headless
 
         // private int validationhashCycling = 0;
 
-// #if UNITY_EDITOR && !COMPILER_UDONSHARP
-//         protected override void OnValidate()
-//         {
-//             if (Application.isPlaying) return;
-//             base.OnValidate();
-//
-//             if (
-//                 ValidationCache.ShouldRunValidation(
-//                     this,
-//                     HashCode.Combine(
-//                         offset,
-//                         speed,
-//                         floatDrivers
-//                     )
-//                 )
-//             )
-//             {
-//                 ApplyDefaultValues();
-//             }
-//         }
-//
-//         [ContextMenu("Reset Values")]
-//         public void ApplyDefaultValues()
-//         {
-//             _floatDrivers = floatDrivers.GetComponentsInChildren<FloatDriver>();
-//             Log($"applying default to {_floatDrivers.Length} float drivers");
-//             for (var i = 0; i < _floatDrivers.Length; i++)
-//             {
-//                 _floatDrivers[i].ApplyFloatValue(offset);
-//             }
-//         }
-// #endif
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+        private void FindFloatDrivers()
+        {
+            _floatDrivers = Array.Empty<FloatDriver>();
+            if (Utilities.IsValid(floatDriverSource))
+            {
+                _floatDrivers = floatDriverSource.GetComponentsInChildren<FloatDriver>();
+            }
+
+            Log($"found {_floatDrivers.Length} float drivers");
+        }
+
+        public override bool OnPreprocess()
+        {
+            if (!base.OnPreprocess())
+            {
+                return false;
+            }
+
+            FindFloatDrivers();
+
+            return true;
+        }
+#endif
     }
 }

@@ -16,11 +16,7 @@ namespace moe.nikky.kinetic_controls.driver.animator
         }
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-        public override void ApplyIntValue(int value)
-        {
-            base.ApplyIntValue(value);
-            OnUpdateInt(value);
-        }
+        protected override bool UpdateInEditor => true;
 #endif
     }
 }

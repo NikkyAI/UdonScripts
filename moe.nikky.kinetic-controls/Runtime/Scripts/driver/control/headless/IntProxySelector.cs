@@ -1,5 +1,4 @@
-﻿using System;
-using moe.nikky.common;
+﻿using moe.nikky.common;
 using moe.nikky.kinetic_controls.control.headless;
 using UnityEngine;
 

@@ -59,7 +59,7 @@ namespace moe.nikky.common
         
         #region Network Sync
         
-        public virtual bool Synced
+        public virtual bool NetworkSynced
         {
             get => false;
             set { }

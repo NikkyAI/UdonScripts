@@ -4,7 +4,6 @@ using moe.nikky.common;
 using moe.nikky.kinetic_controls.Editor;
 using UdonSharp;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VRC;
 using VRC.SDKBase;
 
@@ -16,7 +15,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
     [RequireComponent(typeof(LeverEditorHelper))]
 #endif
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
-    public class Lever : BaseKineticControl
+    public class Lever : KineticControl
     {
         [Header("Lever")] // header
         [SerializeField]

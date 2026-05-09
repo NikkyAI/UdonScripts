@@ -28,13 +28,13 @@ namespace moe.nikky.kinetic_controls.driver.text
             _EnsureInit();
         }
 
-        protected override void _Init()
-        {
-            base._Init();
-            
-            //TODO: check if all fields are valid
-            // or find the TMP component
-        }
+        // protected override void _Init()
+        // {
+        //     base._Init();
+        //     
+        //     //TODO: check if all fields are valid
+        //     // or find the TMP component
+        // }
 
         protected override void OnUpdateInt(int value)
         {
@@ -43,36 +43,39 @@ namespace moe.nikky.kinetic_controls.driver.text
             }
         }
         
+        private int _cachedValue = int.MinValue;
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
+
         protected override void OnValidate()
         {
             if(!Application.isPlaying) return;
             base.OnValidate();
 
-            if (cachedValue == int.MinValue) return;
+            if (_cachedValue == int.MinValue) return;
             
             if (
                 ValidationCache.ShouldRunValidation(
                     this,
                     HashCode.Combine(
                         valueDisplayFormat,
-                        cachedValue
+                        _cachedValue
                     )
                 )
             )
             {
-                OnUpdateInt(cachedValue);
+                OnUpdateInt(_cachedValue);
             }
         }
-        
-        public override void ApplyIntValue(int value)
+        protected override bool UpdateInEditor => true;
+
+        protected override void EditorUpdateIntValue(int value)
         {
             OnUpdateInt(value);
-            cachedValue = value;
             if (textMeshPro)
             {
                 textMeshPro.MarkDirty();
             }
+            _cachedValue = value;
         }
 #endif
     }

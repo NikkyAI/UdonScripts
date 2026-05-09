@@ -1,5 +1,4 @@
-﻿using System;
-using JetBrains.Annotations;
+﻿using JetBrains.Annotations;
 using moe.nikky.common;
 using UdonSharp;
 using UnityEngine;

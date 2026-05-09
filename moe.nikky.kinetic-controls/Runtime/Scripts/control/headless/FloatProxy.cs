@@ -2,10 +2,9 @@
 
 using System;
 using moe.nikky.common;
-using moe.nikky.kinetic_controls.Editor;
+using moe.nikky.common.Editor;
 using UdonSharp;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.control.headless
@@ -17,10 +16,6 @@ namespace moe.nikky.kinetic_controls.control.headless
     public class FloatProxy : LoggingSimple
     {
         [SerializeField]
-// #if READONLY
-//         [ReadOnly]
-// #endif
-        [Obsolete]
         internal GameObject floatDriverSource;
 
         [SerializeField, ReadOnly, NonReorderable]
@@ -52,7 +47,7 @@ namespace moe.nikky.kinetic_controls.control.headless
         // }
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-        internal void FindFloatDrivers()
+        private void FindFloatDrivers()
         {
             if (Utilities.IsValid(floatDriverSource))
             {
@@ -72,9 +67,9 @@ namespace moe.nikky.kinetic_controls.control.headless
             }
 
             FindFloatDrivers();
-
             return true;
         }
+
         public void EditorUpdateFloatRescale(float value)
         {
             foreach (var floatDriver in floatDrivers)

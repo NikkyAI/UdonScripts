@@ -7,11 +7,9 @@
     "VRC.Udon",
     "UdonSharp.Runtime",
     "com.texelsaur.common",
-    "com.texelsaur.misc",
     "Unity.TextMeshPro",
     "Unity.Postprocessing.Runtime",
-    "moe.nikky.common",
-    "AudioLink"
+    "moe.nikky.common"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

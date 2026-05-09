@@ -18,7 +18,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class Handle : ACLBaseReadonly
     {
-        [SerializeField] [ReadOnly] private BaseKineticControl[] controlBehaviours = { };
+        [SerializeField] [ReadOnly] private KineticControl[] controlBehaviours = { };
 
         [FormerlySerializedAs("handleReset")]
         [Header("Handle - Internals")]
@@ -704,10 +704,10 @@ namespace moe.nikky.kinetic_controls.control.kinetic
         }
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-        public void Register(BaseKineticControl baseKineticControl)
+        public void Register(KineticControl kineticControl)
         {
-            Log($"registering {baseKineticControl}");
-            controlBehaviours = controlBehaviours.AddUnique(baseKineticControl);
+            Log($"registering {kineticControl}");
+            controlBehaviours = controlBehaviours.AddUnique(kineticControl);
         }
 
 

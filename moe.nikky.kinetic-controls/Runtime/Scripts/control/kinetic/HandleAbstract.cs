@@ -1,9 +1,6 @@
 ﻿using moe.nikky.common;
-using moe.nikky.common;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VRC;
-using VRC.SDK3.Components;
 using VRC.SDKBase;
 using VRC.Udon.Common;
 
@@ -15,7 +12,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
 
         [SerializeField]
         [ReadOnly]
-        protected BaseKineticControl[] controlBehaviours = { };
+        protected KineticControl[] controlBehaviours = { };
 
         [Header("Handle - Internals")]
         [Tooltip(
@@ -184,10 +181,10 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             }
         }
 
-        public void RegisterRuntime(BaseKineticControl baseKineticControl)
+        public void RegisterRuntime(KineticControl kineticControl)
         {
-            Log($"registering {baseKineticControl}");
-            controlBehaviours = controlBehaviours.AddUnique(baseKineticControl);
+            Log($"registering {kineticControl}");
+            controlBehaviours = controlBehaviours.AddUnique(kineticControl);
         }
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP

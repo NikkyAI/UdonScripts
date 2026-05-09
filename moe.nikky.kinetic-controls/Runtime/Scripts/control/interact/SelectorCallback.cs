@@ -1,6 +1,5 @@
-﻿using System;
-using moe.nikky.common;
-using moe.nikky.kinetic_controls.Editor;
+﻿using moe.nikky.common;
+using moe.nikky.common.Editor;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -14,8 +13,10 @@ namespace moe.nikky.kinetic_controls.control.interact
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class SelectorCallback : LoggingSimple
     {
-        [Header("Selector Callback")] [SerializeField]
-        public GameObject boolToggleDriver;
+        [Header("Selector Callback")] //header
+        [FormerlySerializedAs("boolToggleDriver")]  //
+        [SerializeField]
+        public GameObject boolDriverSource;
 
         [Header("Internals")] 
         [SerializeField] [ReadOnly] public Selector selector;
@@ -68,10 +69,16 @@ namespace moe.nikky.kinetic_controls.control.interact
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
         public override bool OnPreprocess()
         {
-            if (Utilities.IsValid(boolToggleDriver))
+            if (!base.OnPreprocess())
             {
-                boolDrivers = boolToggleDriver.GetComponentsInChildren<BoolDriver>();
+                return false;
             }
+
+            if (Utilities.IsValid(boolDriverSource))
+            {
+                boolDrivers = boolDriverSource.GetComponentsInChildren<BoolDriver>();
+            }
+            Log($"found {boolDrivers.Length} bool drivers");
 
             return true;
         }

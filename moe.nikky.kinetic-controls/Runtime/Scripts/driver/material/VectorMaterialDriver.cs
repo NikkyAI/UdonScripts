@@ -1,5 +1,4 @@
 ﻿using moe.nikky.common;
-using moe.nikky.common;
 using UnityEngine;
 using VRC;
 using VRC.SDKBase;

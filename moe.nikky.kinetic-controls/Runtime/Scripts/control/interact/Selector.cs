@@ -1,7 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using moe.nikky.common;
-using moe.nikky.kinetic_controls.Editor;
+using moe.nikky.common.Editor;
 using Texel;
 using UdonSharp;
 using UnityEngine;
@@ -29,11 +28,11 @@ namespace moe.nikky.kinetic_controls.control.interact
         [Tooltip("index to select when deactivated by clickign on current active, requires clickOnActiveDisables")]
         private int disabledIndex = 0;
 
-        [SerializeField]
-        protected bool useRemap = false;
+        [SerializeField] protected bool useRemap = false;
+
         [SerializeField] //
         private Vector2Int[] remapValues = { };
-        
+
         private int RemapIndex(int index)
         {
             if (useRemap)
@@ -45,6 +44,7 @@ namespace moe.nikky.kinetic_controls.control.interact
                         return remapValue.y;
                     }
                 }
+
                 return index;
             }
             else
@@ -53,12 +53,12 @@ namespace moe.nikky.kinetic_controls.control.interact
             }
         }
 
-        // [SerializeField] private GameObject selectorCallbacks;
-
         [Header("Drivers")] // header
-        [FormerlySerializedAs("intSelectedDrivers")]
+        [FormerlySerializedAs("intDrivers")]
         [SerializeField]
-        private GameObject intDrivers;
+        private GameObject intDriverSource;
+
+        [SerializeField] [ReadOnly] private IntDriver[] intDrivers = { };
 
         protected override string LogPrefix => nameof(Selector);
 
@@ -66,18 +66,17 @@ namespace moe.nikky.kinetic_controls.control.interact
 
         [SerializeField] [ReadOnly] private SelectorCallback[] interactCallbacks = { };
 
-        [SerializeField] [ReadOnly] private IntDriver[] intDriversReadonly = { };
-
         private BoolDriver[][] _boolDrivers = { };
-        // private BoolDriver[] _isAuthorizedBoolDrivers = { };
 
-        [Header("State")] // header
-        [SerializeField, UdonSynced]
-        private bool synced = true;
+        [Header("Network Sync")] // header
+        [FormerlySerializedAs("synced")]
+        [SerializeField]
+        [UdonSynced]
+        private bool networkSynced = true;
 
-        public override bool Synced
+        public override bool NetworkSynced
         {
-            get => synced;
+            get => networkSynced;
             set
             {
                 if (!IsAuthorized) return;
@@ -85,7 +84,7 @@ namespace moe.nikky.kinetic_controls.control.interact
                 var prevValue = _syncedIndex;
                 TakeOwnership();
                 Log($"set synced to {value}");
-                synced = value;
+                networkSynced = value;
                 Log($"set index to {_syncedIndex} => {prevValue}");
                 _syncedIndex = prevValue;
 
@@ -113,9 +112,9 @@ namespace moe.nikky.kinetic_controls.control.interact
                     //     remappedValue = remapValues[_syncedIndex];
                     // }
 
-                    for (var i = 0; i < intDriversReadonly.Length; i++)
+                    for (var i = 0; i < intDrivers.Length; i++)
                     {
-                        intDriversReadonly[i].UpdateIntRemap(remappedValue);
+                        intDrivers[i].UpdateIntRemap(remappedValue);
                     }
 
                     if (_syncedIndex >= 0 && _syncedIndex < interactCallbacks.Length)
@@ -156,7 +155,7 @@ namespace moe.nikky.kinetic_controls.control.interact
 
         public void UpdateSyncedIndex()
         {
-            if (synced)
+            if (networkSynced)
             {
                 Log("taking ownership and serializing");
                 TakeOwnership();
@@ -173,39 +172,10 @@ namespace moe.nikky.kinetic_controls.control.interact
         {
             base._Init();
             SetupComponents();
-            // for (var i = 0; i < _interactCallbacks.Length; i++)
-            // {
-            //     Log($"register interact callback {i}");
-            //     _interactCallbacks[i]._Register(
-            //         eventIndex: SelectorCallback.EVENT_INTERACT,
-            //         handler: this,
-            //         eventName: nameof(_OnInteract),
-            //         args: nameof(_interactIndex)
-            //     );
-            // }
         }
 
         private void SetupComponents()
         {
-            // Log("SetupComponents");
-            // if (Utilities.IsValid(intDrivers))
-            // {
-            //     // Log("getting int drivers");
-            //     _intDrivers = intDrivers.GetComponentsInChildren<IntDriver>();
-            // }
-            // if (Utilities.IsValid(gameObject))
-            // {
-            //     // Log("getting interact callbacks");
-            //     _interactCallbacks = gameObject.GetComponentsInChildren<SelectorCallback>();
-            // }
-            // if (Utilities.IsValid(_interactCallbacks))
-            // {
-            //     Log($"Found {_interactCallbacks.Length} selector buttons");
-            // }
-            // else
-            // {
-            //     LogWarning("found no interact callbacks");
-            // }
             _boolDrivers = new BoolDriver[interactCallbacks.Length][];
 
             for (var i = 0; i < interactCallbacks.Length; i++)
@@ -297,10 +267,10 @@ namespace moe.nikky.kinetic_controls.control.interact
 
         private void FindDrivers()
         {
-            if (Utilities.IsValid(intDrivers))
+            if (Utilities.IsValid(intDriverSource))
             {
                 // Log("getting int drivers");
-                intDriversReadonly = intDrivers.GetComponentsInChildren<IntDriver>();
+                intDrivers = intDriverSource.GetComponentsInChildren<IntDriver>();
             }
         }
 
@@ -375,7 +345,7 @@ namespace moe.nikky.kinetic_controls.control.interact
             FindDrivers();
             FindCallbacks();
             SetupComponents();
-            foreach (var intDriver in intDriversReadonly)
+            foreach (var intDriver in intDrivers)
             {
                 // var remappedValue = defaultIndex;
                 // if (remapValues.Length - 1 >= defaultIndex)
@@ -383,7 +353,7 @@ namespace moe.nikky.kinetic_controls.control.interact
                 //     remappedValue = remapValues[defaultIndex];
                 // }
 
-                intDriver.ApplyIntValue(RemapIndex(defaultIndex));
+                intDriver.EditorUpdateIntRescale(RemapIndex(defaultIndex));
                 // intDriver.gameObject.MarkDirty();
             }
 

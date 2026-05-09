@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
-  m_Name: TriggerResetFader
+  m_Name: TriggerResetControl
   m_EditorClassIdentifier: 
   serializedUdonProgramAsset: {fileID: 11400000, guid: f930f651b2033ff43909607f7cbb1ed6, type: 2}
   udonAssembly: 
@@ -20,7 +20,7 @@ MonoBehaviour:
   compiledVersion: 2
   behaviourSyncMode: 1
   hasInteractEvent: 0
-  scriptID: -2612930432988157652
+  scriptID: 5166944010761612929
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
@@ -766,19 +766,19 @@ MonoBehaviour:
       Data: 
     - Name: $k
       Entry: 1
-      Data: smoothedBehaviours
+      Data: smoothedControls
     - Name: $v
       Entry: 7
       Data: 37|UdonSharp.Compiler.FieldDefinition, UdonSharp.Editor
     - Name: <Name>k__BackingField
       Entry: 1
-      Data: smoothedBehaviours
+      Data: smoothedControls
     - Name: <UserType>k__BackingField
       Entry: 7
       Data: 38|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: moe.nikky.kinetic_controls.control.BaseSmoothedControl[], moe.nikky.kinetic-controls
+      Data: moe.nikky.kinetic_controls.control.SmoothedControl[], moe.nikky.kinetic-controls
     - Name: 
       Entry: 8
       Data: 

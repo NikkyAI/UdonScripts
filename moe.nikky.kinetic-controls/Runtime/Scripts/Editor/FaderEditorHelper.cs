@@ -10,9 +10,6 @@ using UnityEngine.Serialization;
 using VRC;
 using VRC.SDK3.Midi;
 using VRC.SDKBase;
-using VRC.SDKBase.Editor.Attributes;
-using VRC.Udon;
-using Object = UnityEngine.Object;
 
 namespace moe.nikky.kinetic_controls.Editor
 {

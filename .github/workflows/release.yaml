@@ -40,56 +40,59 @@ jobs:
       name: 'Check out'
       uses: 'actions/checkout@v4'
     - id: 'step-1'
+      name: 'updated versions'
+      run: './updateVersions.main.kts'
+    - id: 'step-2'
       name: 'get version from package.json'
       uses: 'zoexx/github-action-json-file-properties@1.0.6'
       with:
         file_path: '${{ matrix.package-name }}/package.json'
         prop_path: 'version'
-    - id: 'step-2'
+    - id: 'step-3'
       name: 'precompute variables'
       run: |-
         FULL_PACKAGE=${{ matrix.package-name }}
         SHORT_PACKAGE=${FULL_PACKAGE#moe.nikky.}
-        echo "tag=$SHORT_PACKAGE-${{ steps.step-1.outputs.value }}" >> $GITHUB_OUTPUT
-        echo "zipFile=$SHORT_PACKAGE-${{ steps.step-1.outputs.value }}".zip >> $GITHUB_OUTPUT
-        echo "unityPackage=$SHORT_PACKAGE-${{ steps.step-1.outputs.value }}".unitypackage >> $GITHUB_OUTPUT
-    - id: 'step-3'
+        echo "tag=$SHORT_PACKAGE-${{ steps.step-2.outputs.value }}" >> $GITHUB_OUTPUT
+        echo "zipFile=$SHORT_PACKAGE-${{ steps.step-2.outputs.value }}".zip >> $GITHUB_OUTPUT
+        echo "unityPackage=$SHORT_PACKAGE-${{ steps.step-2.outputs.value }}".unitypackage >> $GITHUB_OUTPUT
+    - id: 'step-4'
       name: 'Check Tag exists'
       uses: 'mukunku/tag-exists-action@v1.7.0'
       with:
-        tag: '${{ steps.step-2.outputs.tag }}'
-    - id: 'step-4'
+        tag: '${{ steps.step-3.outputs.tag }}'
+    - id: 'step-5'
       name: 'Create Package Zip'
       working-directory: '${{ matrix.package-name }}'
-      run: 'zip -r "${{ github.workspace }}/${{ steps.step-2.outputs.zipFile }}" .'
-      if: 'steps.step-3.outputs.exists == ''false'''
-    - id: 'step-5'
+      run: 'zip -r "${{ github.workspace }}/${{ steps.step-3.outputs.zipFile }}" .'
+      if: 'steps.step-4.outputs.exists == ''false'''
+    - id: 'step-6'
       name: 'Track Package Meta Files'
       run: 'find "${{ matrix.package-name }}/" -name \*.meta >> metaList-${{ matrix.package-name }}'
-      if: 'steps.step-3.outputs.exists == ''false'''
-    - id: 'step-6'
+      if: 'steps.step-4.outputs.exists == ''false'''
+    - id: 'step-7'
       name: 'Create UnityPackage'
       uses: 'pCYSl5EDgo/create-unitypackage@v1.2.3'
       with:
-        package-path: '${{ steps.step-2.outputs.unityPackage }}'
+        package-path: '${{ steps.step-3.outputs.unityPackage }}'
         include-files: 'metaList-${{ matrix.package-name }}'
-      if: 'steps.step-3.outputs.exists == ''false'''
-    - id: 'step-7'
+      if: 'steps.step-4.outputs.exists == ''false'''
+    - id: 'step-8'
       name: 'Create Tag'
       uses: 'rickstaa/action-create-tag@v1.7.2'
       with:
-        tag: '${{ steps.step-2.outputs.tag }}'
-      if: 'steps.step-3.outputs.exists == ''false'''
-    - id: 'step-8'
+        tag: '${{ steps.step-3.outputs.tag }}'
+      if: 'steps.step-4.outputs.exists == ''false'''
+    - id: 'step-9'
       name: 'Make Release'
       uses: 'softprops/action-gh-release@v2'
       with:
-        tag_name: '${{ steps.step-2.outputs.tag }}'
+        tag_name: '${{ steps.step-3.outputs.tag }}'
         files: |-
-          ${{ steps.step-2.outputs.zipFile }}
-          ${{ steps.step-2.outputs.unityPackage }}
+          ${{ steps.step-3.outputs.zipFile }}
+          ${{ steps.step-3.outputs.unityPackage }}
           ${{ matrix.package-name }}/package.json
-      if: 'steps.step-3.outputs.exists == ''false'''
+      if: 'steps.step-4.outputs.exists == ''false'''
   build-done:
     runs-on: 'ubuntu-latest'
     needs:

@@ -28,13 +28,13 @@ namespace moe.nikky.kinetic_controls.driver.text
             _EnsureInit();
         }
 
-        protected override void _Init()
-        {
-            base._Init();
-            
-            //TODO: check if all fields are valid
-            // or find the TMP component
-        }
+        // protected override void _Init()
+        // {
+        //     base._Init();
+        //     
+        //     //TODO: check if all fields are valid
+        //     // or find the TMP component
+        // }
 
         protected override void OnUpdateFloat(float value)
         {
@@ -43,7 +43,7 @@ namespace moe.nikky.kinetic_controls.driver.text
             }
         }
         
-        protected float cachedValue = float.NaN;
+        private float _cachedValue = float.NaN;
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
         
         protected override void OnValidate()
@@ -51,19 +51,19 @@ namespace moe.nikky.kinetic_controls.driver.text
             if(!Application.isPlaying) return;
             base.OnValidate();
 
-            if (float.IsNaN(cachedValue)) return;
+            if (float.IsNaN(_cachedValue)) return;
             
             if (
                 ValidationCache.ShouldRunValidation(
                   this,
                     HashCode.Combine(
                         valueDisplayFormat,
-                        cachedValue
+                        _cachedValue
                     )
                 )
             )
             {
-                UpdateFloatRescale(cachedValue);
+                UpdateFloatRescale(_cachedValue);
             }
         }
         
@@ -74,19 +74,9 @@ namespace moe.nikky.kinetic_controls.driver.text
             {
                 textMeshPro.MarkDirty();
             }
-        }
 
-        // protected override void EditorUpdateFloatValue(float value)
-        // {
-        //     // base.EditorUpdateFloatValue(value);
-        //     _EnsureInit();
-        //     cachedValue = value;
-        //     OnUpdateFloat(value);
-        //     if (textMeshPro)
-        //     {
-        //         textMeshPro.MarkDirty();
-        //     }
-        // }
+            _cachedValue = value;
+        }
 #endif
     }
 }

@@ -1,14 +1,9 @@
 ﻿#define READONLY
 
-using System;
-using System.Runtime.CompilerServices;
 using moe.nikky.common;
 using UdonSharp;
 using UnityEngine;
-using UnityEngine.Serialization;
-using VRC;
 using VRC.Dynamics;
-using VRC.SDK3.Components;
 using VRC.SDK3.Dynamics.Contact.Components;
 using VRC.SDKBase;
 using VRC.Udon.Common;

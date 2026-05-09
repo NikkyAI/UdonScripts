@@ -8,8 +8,8 @@ namespace moe.nikky.common
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public abstract class FloatDriver: LoggingSimple
     {
-        [FormerlySerializedAs("useRemapRange")]
         [Header("Value Remapping")]
+        [FormerlySerializedAs("useRemapRange")]
         [SerializeField]
         protected bool enableValueRemapping = false;
         [SerializeField]

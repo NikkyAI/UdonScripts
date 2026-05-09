@@ -1,13 +1,14 @@
 {
-  "name": "moe.nikky.kinetic-controls.audiolink",
-  "displayName": "Kinetic Controls Audiolink",
+  "name": "moe.nikky.kinetic-controls",
+  "displayName": "Kinetic Controls",
   "version": "0.1.0-dev",
-  "description": "Audiolink specific drivers for kinetic controls",
+  "description": "Faders, Levers and other controls that can be moved with your hands",
   "changelogUrl": "https://github.com/NikkyAI/UdonScripts/releases",
   "gitDependencies": {},
   "vpmDependencies": {
-    "moe.nikky.kinetic-controls": "0.1.0-dev",
-    "com.llealloo.audiolink": "^3.1.2"
+    "moe.nikky.common": "0.1.0-dev",
+    "com.texelsaur.access": "^1.2.4",
+    "sh.orels.shaders": "^7.2.0"
   },
   "author": {
     "name": "NikkyAI",

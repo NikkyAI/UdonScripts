@@ -1,5 +1,4 @@
-﻿using System;
-using moe.nikky.common;
+﻿using moe.nikky.common;
 using UnityEngine;
 using UnityEngine.Rendering.PostProcessing;
 
@@ -10,7 +9,7 @@ namespace moe.nikky.kinetic_controls.driver.postprocessing
         [SerializeField] //
         private PostProcessVolume volume;
         [SerializeField, Range(0,10)] //
-        private float timeToSwitch = 1.5f;
+        private float timeToSwitch = 2.5f;
     
         void Start()
         {

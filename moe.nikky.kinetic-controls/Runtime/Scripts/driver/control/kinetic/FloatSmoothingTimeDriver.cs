@@ -1,19 +1,23 @@
-﻿using moe.nikky.common;
+﻿using System;
+using moe.nikky.common;
+using moe.nikky.common.Editor;
 using moe.nikky.kinetic_controls.control;
-using UdonSharp;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VRC;
 using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.driver.control.kinetic
 {
-    public class FloatSmoothingTimeDriver: FloatDriver
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+    [RequireComponent(typeof(PreProcessEditorHelper))]
+#endif
+    public class FloatSmoothingTimeDriver : FloatDriver
     {
         [Header("External Behaviours")] // header
-        [FormerlySerializedAs("faders")]
         [SerializeField]
-        private BaseSmoothedControl[] smoothedBehaviours;
+        private GameObject smoothedControlSource;
+
+        [SerializeField] [ReadOnly] private SmoothedControl[] smoothedControls = { };
 
         protected override string LogPrefix => nameof(FloatSmoothingMaxSpeedDriver);
 
@@ -31,7 +35,7 @@ namespace moe.nikky.kinetic_controls.driver.control.kinetic
                 return;
             }
 
-            foreach (var behaviour in smoothedBehaviours)
+            foreach (var behaviour in smoothedControls)
             {
                 if (Utilities.IsValid(behaviour))
                 {
@@ -40,12 +44,35 @@ namespace moe.nikky.kinetic_controls.driver.control.kinetic
                     behaviour.MarkDirty();
 #endif
                 }
-
             }
         }
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
         protected override bool UpdateInEditor => true;
+
+        private void FindSmoothedBehaviours()
+        {
+            // _valueBoolDrivers = _valueBoolDrivers.AddRange(gameObject.GetComponents<BoolDriver>());
+            smoothedControls = Array.Empty<SmoothedControl>();
+            if (Utilities.IsValid(smoothedControlSource))
+            {
+                smoothedControls = smoothedControlSource.GetComponentsInChildren<SmoothedControl>();
+            }
+
+            Log($"found {smoothedControls.Length} smoothed controls");
+        }
+
+        public override bool OnPreprocess()
+        {
+            if (!base.OnPreprocess())
+            {
+                return false;
+            }
+
+            FindSmoothedBehaviours();
+
+            return true;
+        }
 #endif
     }
 }

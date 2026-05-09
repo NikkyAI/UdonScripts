@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 using moe.nikky.common;
-using moe.nikky.kinetic_controls.Editor;
+using moe.nikky.common.Editor;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -33,14 +33,14 @@ namespace moe.nikky.kinetic_controls.control.interact
         [SerializeField, Range(0,127)]
         protected int midiMinVelocity = 127;
 
-        [FormerlySerializedAs("boolStateDriversObj")]
+        [FormerlySerializedAs("boolStateDrivers")]
         [Header("Drivers")] // header
         [SerializeField]
-        private GameObject boolStateDrivers;
+        private GameObject boolStateDriverSource;
 
         protected override string LogPrefix => nameof(ToggleButton);
 
-        public override bool Synced
+        public override bool NetworkSynced
         {
             get => synced;
             set
@@ -189,13 +189,13 @@ namespace moe.nikky.kinetic_controls.control.interact
             // UnityEditor.EditorUtility.SetDirty(this);
 
             var candidates = gameObject.GetComponentsInChildren<Transform>();
-            if (boolStateDrivers == null)
+            if (boolStateDriverSource == null)
             {
                 foreach (var candidate in candidates)
                 {
                     if (candidate.name == "Bool State Drivers")
                     {
-                        boolStateDrivers = candidate.gameObject;
+                        boolStateDriverSource = candidate.gameObject;
                         Log("Found and assigned Bool State Drivers");
                         UnityEditor.EditorUtility.SetDirty(this);
                         break;
@@ -220,10 +220,10 @@ namespace moe.nikky.kinetic_controls.control.interact
         private void FindBoolDrivers()
         {
             // _valueBoolDrivers = _valueBoolDrivers.AddRange(gameObject.GetComponents<BoolDriver>());
-            if (Utilities.IsValid(boolStateDrivers))
+            if (Utilities.IsValid(boolStateDriverSource))
             {
                 Log("loading bool drivers");
-                valueBoolDrivers = valueBoolDrivers = boolStateDrivers.GetComponentsInChildren<BoolDriver>();
+                valueBoolDrivers = boolStateDriverSource.GetComponentsInChildren<BoolDriver>();
             }
             Log($"found {valueBoolDrivers.Length} bool drivers");
         }

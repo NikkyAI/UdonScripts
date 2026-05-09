@@ -1094,7 +1094,7 @@ MonoBehaviour:
       Data: 59|System.RuntimeType, mscorlib
     - Name: 
       Entry: 1
-      Data: moe.nikky.kinetic_controls.control.kinetic.BaseKineticControl[], moe.nikky.kinetic-controls
+      Data: moe.nikky.kinetic_controls.control.kinetic.KineticControl[], moe.nikky.kinetic-controls
     - Name: 
       Entry: 8
       Data: 

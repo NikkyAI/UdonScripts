@@ -9,11 +9,12 @@ namespace moe.nikky.kinetic_controls.driver.control.kinetic
 {
     public class FloatSmoothingRateDriver : FloatDriver
     {
+        [FormerlySerializedAs("smoothedBehaviours")]
         [Header("Deprecated, use FloatSmoothingTimeDriver and FloatSmoothingMaxSpeedDriver instead")]
         [Header("External Behaviours")] // header
         [FormerlySerializedAs("faders")]
         [SerializeField]
-        private BaseSmoothedControl[] smoothedBehaviours;
+        private SmoothedControl[] smoothedControls = {};
 
         protected override string LogPrefix => nameof(FloatSmoothingRateDriver);
 
@@ -31,7 +32,7 @@ namespace moe.nikky.kinetic_controls.driver.control.kinetic
                 return;
             }
 
-            foreach (var behaviour in smoothedBehaviours)
+            foreach (var behaviour in smoothedControls)
             {
                 if (Utilities.IsValid(behaviour))
                 {

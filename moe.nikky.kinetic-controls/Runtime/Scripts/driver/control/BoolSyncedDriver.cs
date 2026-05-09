@@ -1,16 +1,24 @@
-﻿using moe.nikky.common;
-using moe.nikky.kinetic_controls.control;
+﻿using System;
+using moe.nikky.common;
+using moe.nikky.common.Editor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VRC;
 using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.driver.control
 {
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+    [RequireComponent(typeof(PreProcessEditorHelper))]
+#endif
     public class BoolSyncedDriver : BoolDriver
     {
+        [FormerlySerializedAs("syncedBehaviours")]
         [Header("External Behaviours")] // header
         [SerializeField]
-        private BaseBehaviour[] syncedBehaviours;
+        private GameObject syncedBehaviourSource;
+
+        [SerializeField] [ReadOnly] private BaseBehaviour[] baseBehaviours;
 
         protected override string LogPrefix => nameof(BoolSyncedDriver);
 
@@ -18,11 +26,11 @@ namespace moe.nikky.kinetic_controls.driver.control
         {
             if (!enabled) return;
 
-            foreach (var behaviour in syncedBehaviours)
+            foreach (var behaviour in baseBehaviours)
             {
                 if (Utilities.IsValid(behaviour))
                 {
-                    behaviour.Synced = value;
+                    behaviour.NetworkSynced = value;
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
                     behaviour.MarkDirty();
 #endif
@@ -37,7 +45,31 @@ namespace moe.nikky.kinetic_controls.driver.control
             base.ApplyBoolValue(value);
             OnUpdateBool(value);
         }
+
+
+        private void FindBaseBehaviours()
+        {
+            // _valueBoolDrivers = _valueBoolDrivers.AddRange(gameObject.GetComponents<BoolDriver>());
+            baseBehaviours = Array.Empty<BaseBehaviour>();
+            if (Utilities.IsValid(syncedBehaviourSource))
+            {
+                baseBehaviours = syncedBehaviourSource.GetComponentsInChildren<BaseBehaviour>();
+            }
+            
+            Log($"found {baseBehaviours.Length} base behaviours");
+        }
+
+        public override bool OnPreprocess()
+        {
+            if (!base.OnPreprocess())
+            {
+                return false;
+            }
+
+            FindBaseBehaviours();
+
+            return true;
+        }
 #endif
     }
 }
-

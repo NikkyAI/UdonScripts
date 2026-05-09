@@ -1,6 +1,5 @@
 ﻿using moe.nikky.common;
 using UnityEngine;
-using VRC;
 using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.driver.material

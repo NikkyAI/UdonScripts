@@ -1,13 +1,12 @@
 {
   "name": "moe.nikky.common",
   "displayName": "moe.nikky.common",
-  "version": "0.1.0-dev.2",
+  "version": "0.1.0-dev",
   "description": "shared dependencies for other packages",
   "changelogUrl": "https://github.com/NikkyAI/UdonScripts/releases",
   "gitDependencies": {},
   "vpmDependencies": {
-    "com.texelsaur.access": "^1.2.4",
-    "com.texelsaur.misc": "^1.0.5"
+    "com.texelsaur.access": "^1.2.4"
   },
   "author": {
     "name": "NikkyAI",

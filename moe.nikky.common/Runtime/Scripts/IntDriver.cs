@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using UdonSharp;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace moe.nikky.common
 {
@@ -8,14 +9,16 @@ namespace moe.nikky.common
     public abstract class IntDriver: LoggingSimple
     {
         
+        [Header("Value Remapping")]
+        [FormerlySerializedAs("useRemap")]
         [SerializeField]
-        protected bool useRemap = false;
+        protected bool enableValueRemapping = false;
         [SerializeField] //
         private Vector2Int[] remapValues = { };
         
         private int RemapIndex(int index)
         {
-            if (useRemap)
+            if (enableValueRemapping)
             {
                 foreach (var remapValue in remapValues)
                 {
@@ -48,17 +51,35 @@ namespace moe.nikky.common
             OnUpdateInt(RemapIndex(value));
         }
 
-        protected int cachedValue = int.MinValue;
+        // protected int cachedValue = int.MinValue;
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
 
         // protected override int ValidationHash => HashCode.Combine(base.GetHashCode(), cachedValue);
+        protected virtual bool UpdateInEditor => false;
 
-        public virtual void ApplyIntValue(int value)
+        protected virtual void EditorUpdateIntValue(int value)
         {
+            if (!UpdateInEditor) return;
             _EnsureInit();
-            cachedValue = value;
-            // OnUpdateInt(value);
-            // OnValidateApplyValues();
+            OnUpdateInt(value);
+            PostEditorUpdate(value);
+        }
+        
+        
+        protected virtual void PostEditorUpdate(int value)
+        {
+            
+        }
+        
+        
+        public void EditorUpdateIntRescale(int inputValue)
+        {
+            if (!enabled) return;
+            if (enableValueRemapping)
+            {
+                inputValue = RemapIndex(inputValue);
+            }
+            EditorUpdateIntValue(inputValue);
         }
 #endif
     }

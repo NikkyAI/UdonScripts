@@ -1,4 +1,5 @@
-﻿using Texel;
+﻿using moe.nikky.common.Editor;
+using Texel;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -7,6 +8,9 @@ using VRC.SDKBase;
 
 namespace moe.nikky.common.utils
 {
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+    [RequireComponent(typeof(PreProcessEditorHelper))]
+#endif
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class ACLBaseManager : ACLBaseSimple
     {
@@ -61,6 +65,17 @@ namespace moe.nikky.common.utils
             
                 UnityEditor.EditorUtility.SetDirty(this);
             }
+        }
+
+        public override bool OnPreprocess()
+        {
+            if (!base.OnPreprocess())
+            {
+                return false;
+            }
+
+            ApplyACLs();
+            return true;
         }
 
         [ContextMenu("Apply ACLs")]
