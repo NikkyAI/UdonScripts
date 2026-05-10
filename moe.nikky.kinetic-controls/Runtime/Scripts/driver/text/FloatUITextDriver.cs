@@ -47,7 +47,7 @@ namespace moe.nikky.kinetic_controls.driver.text
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
         protected override void OnValidate()
         {
-            if(!Application.isPlaying) return;
+            if(Application.isPlaying) return;
             base.OnValidate();
 
             if (float.IsNaN(cachedValue)) return;
@@ -71,7 +71,11 @@ namespace moe.nikky.kinetic_controls.driver.text
         {
             if (textMeshPro)
             {
-                textMeshPro.MarkDirty();
+
+                if (!Application.isPlaying)
+                {
+                    textMeshPro.MarkDirty();
+                }
             }
         }
         // protected override void EditorUpdateFloatValue(float value)

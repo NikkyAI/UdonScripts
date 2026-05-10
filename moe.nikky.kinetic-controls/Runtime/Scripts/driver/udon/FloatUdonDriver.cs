@@ -1,5 +1,10 @@
-﻿using moe.nikky.common;
+﻿using System.Linq;
+using moe.nikky.common;
+using moe.nikky.common.utils;
+using UdonSharp;
+using UnityEditor;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VRC.SDKBase;
 using VRC.Udon;
 
@@ -11,10 +16,13 @@ namespace moe.nikky.kinetic_controls.driver.udon
         [SerializeField]
         private UdonBehaviour[] externalBehaviours;
 
-        [SerializeField]
-        private string floatField;
-        [SerializeField]
-        private string eventName;
+        [SerializeField] private string floatField;
+        
+        [FormerlySerializedAs("eventName")]
+        [Tooltip("this PUBLIC methid is called after the field has been updated")]
+        [SerializeField] private string eventNameUdon;
+        [Tooltip("this method is getting called instead of the event name when updating in the unity editor")]
+        [SerializeField] private string eventNameEditor;
 
         protected override string LogPrefix => nameof(FloatUdonDriver);
 
@@ -34,14 +42,26 @@ namespace moe.nikky.kinetic_controls.driver.udon
                 }
             }
 
-            if (eventName.Length > 0)
+            if (eventNameUdon.Length > 0)
             {
                 for (var i = 0; i < externalBehaviours.Length; i++)
                 {
                     var ext = externalBehaviours[i];
                     if (Utilities.IsValid(ext))
                     {
-                        ext.SendCustomEvent(eventName);
+                        // Log("sending event " + eventName + " to " + ext);
+                        ext.SendCustomEvent(eventNameUdon);
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+//                         var componentIndex = ext.gameObject.GetComponentIndex(ext);
+//                         if (componentIndex >= 0)
+//                         {
+//                             var baseBehaviour = ext.gameObject.GetComponentAtIndex<BaseBehaviour>(componentIndex);
+//                             if (baseBehaviour != null)
+//                             {
+//                                 Log("found base behaviour " + baseBehaviour);
+//                             }
+//                         }
+#endif
                     }
                 }
             }
@@ -49,6 +69,38 @@ namespace moe.nikky.kinetic_controls.driver.udon
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
         protected override bool UpdateInEditor => true;
+
+        protected override void PostEditorUpdate(float value)
+        {
+            foreach (var ext in externalBehaviours)
+            {
+                if (Utilities.IsValid(ext))
+                {
+                    if (UdonsharpFinder.Find(ext, out var udonSharpBehaviour))
+                    {
+                        Log($"found {udonSharpBehaviour}");
+                        var serializedObj = new SerializedObject(udonSharpBehaviour);
+                        var property = serializedObj.FindProperty(floatField);
+                        if (property != null)
+                        {
+                            Log($"found {floatField}");
+                            if (!Mathf.Approximately(property.floatValue, value))
+                            {
+                                Log($"setting value of {floatField} to {value}");
+                                property.floatValue = value;
+                                serializedObj.ApplyModifiedProperties();
+                            }
+                        }
+
+                        if (eventNameEditor.Length > 0)
+                        {
+                            Log($"invoking {eventNameEditor}");
+                            udonSharpBehaviour.Invoke(eventNameEditor, 0f);
+                        }
+                    }
+                }
+            }
+        }
 #endif
     }
 }

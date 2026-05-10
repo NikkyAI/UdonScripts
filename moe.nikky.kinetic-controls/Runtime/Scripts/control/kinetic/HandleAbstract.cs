@@ -6,12 +6,15 @@ using VRC.Udon.Common;
 
 namespace moe.nikky.kinetic_controls.control.kinetic
 {
-    public abstract class HandleAbstract : ACLBaseReadonly
-    {
+    public abstract class HandleAbstract : TexelAccessControl
+    { 
+        protected override bool AccessControlIsReadOnly => true;
+        
         protected bool IsHeldLocally = false;
 
         [SerializeField]
         [ReadOnly]
+        [NonReorderable]
         protected KineticControl[] controlBehaviours = { };
 
         [Header("Handle - Internals")]
@@ -162,7 +165,10 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             }
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-            transform.MarkDirty();
+            if(!Application.isPlaying)
+            {
+                transform.MarkDirty();
+            }
 #endif
         }
 
@@ -183,7 +189,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
 
         public void RegisterRuntime(KineticControl kineticControl)
         {
-            Log($"registering {kineticControl}");
+            LogDebug($"registering {kineticControl}");
             controlBehaviours = controlBehaviours.AddUnique(kineticControl);
         }
 
@@ -203,7 +209,10 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             rigidBody.isKinematic = true;
             rigidBody.drag = 10f;
             rigidBody.angularDrag = 5f;
-            rigidBody.MarkDirty();
+            if(!Application.isPlaying)
+            {
+                rigidBody.MarkDirty();
+            }
         }
 #endif
     }

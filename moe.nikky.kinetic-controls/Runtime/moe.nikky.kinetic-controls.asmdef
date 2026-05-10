@@ -5,11 +5,13 @@
     "VRC.SDK3",
     "VRC.SDKBase",
     "VRC.Udon",
+    "VRC.Udon.Editor",
     "UdonSharp.Runtime",
     "com.texelsaur.common",
     "Unity.TextMeshPro",
     "Unity.Postprocessing.Runtime",
-    "moe.nikky.common"
+    "moe.nikky.common",
+    "UdonSharp.Editor"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

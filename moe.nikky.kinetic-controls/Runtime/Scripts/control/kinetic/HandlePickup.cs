@@ -1,4 +1,6 @@
-﻿using moe.nikky.common;
+﻿#define READONLY
+
+using moe.nikky.common;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDK3.Components;
@@ -17,9 +19,6 @@ namespace moe.nikky.kinetic_controls.control.kinetic
         internal VRC_Pickup pickup;
 
         [SerializeField]
-#if READONLY
-        [ReadOnly]
-#endif
         [ReadOnly]
         private bool pickupHasObjectSync = false;
 
@@ -72,7 +71,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
 
         public override void OnPickup()
         {
-            Log("OnPickup");
+            // Log("OnPickup");
             if (!IsAuthorized)
             {
                 pickup.Drop();
@@ -102,10 +101,10 @@ namespace moe.nikky.kinetic_controls.control.kinetic
                 return;
             }
 
-            Log("_OnPickup");
+            // Log("_OnPickup");
             if (IsHeldLocally)
             {
-                Log("already being adjusted");
+                LogWarning("handle picked up again, but its already being adjusted");
                 return;
             }
 
@@ -129,7 +128,6 @@ namespace moe.nikky.kinetic_controls.control.kinetic
 
         public override void OnDrop()
         {
-            Log("OnDrop");
             if (!IsAuthorized)
                 return;
 
@@ -138,7 +136,6 @@ namespace moe.nikky.kinetic_controls.control.kinetic
                 return;
             }
 
-            Log("_OnDrop");
 
             foreach (var baseKineticControl in controlBehaviours)
             {
@@ -195,9 +192,9 @@ namespace moe.nikky.kinetic_controls.control.kinetic
 
         private void SetupPickup()
         {
-            Log("SetupPickup");
+            LogDebug("SetupPickup");
             pickup = GetComponent<VRC_Pickup>();
-            Log($"pickup is {pickup}");
+            LogDebug($"pickup is {pickup}");
             if (Utilities.IsValid(pickup))
             {
                 pickupHasObjectSync = pickup.GetComponent<VRCObjectSync>() != null ||

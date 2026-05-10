@@ -63,7 +63,7 @@ namespace moe.nikky.kinetic_controls.driver.postprocessing
     
         public void OnTargetReached()
         {
-            Log("On Target Reached");
+            LogDebug("On Target Reached");
             if (Mathf.Approximately(volume.weight, 0f))
             {
                 volume.enabled = false;

@@ -194,7 +194,7 @@ namespace moe.nikky.kinetic_controls.Editor
 
         [SerializeField] public DebugLog debugLog;
 
-        private bool initialized = false;
+        private bool _initialized = false;
         private float outputRangeMin => remapTo.x;
         private float outputRangeMax => remapTo.y;
 
@@ -211,16 +211,16 @@ namespace moe.nikky.kinetic_controls.Editor
         private Lever GetLever() => gameObject.GetComponent<Lever>();
 
         [ContextMenu("ApplyValues")]
-        private void ApplyValues()
+        private void ApplyValuesContext()
         {
             ApplyValues(onValidate: false);
         }
 
-        private void ApplyValues(bool onValidate = false)
+        private void ApplyValues(bool onValidate = false, bool onPreProcess = false)
         {
-            if (!initialized)
+            if (!onPreProcess && !_initialized)
             {
-                Debug.LogWarning("not initalized yet");
+                Debug.LogWarning("not initalized yet", this);
                 return;
             }
 
@@ -271,6 +271,7 @@ namespace moe.nikky.kinetic_controls.Editor
             l.isCyclic = isCyclic;
             if (Utilities.IsValid(minLimitIndicator))
             {
+                // minLimitIndicator.transform.
                 minLimitIndicator.gameObject.SetActive(!isCyclic);
             }
 
@@ -297,19 +298,38 @@ namespace moe.nikky.kinetic_controls.Editor
             if (Utilities.IsValid(smoothedIndicator))
                 l.valueIndicator = smoothedIndicator;
             l._EnsureInit();
+            l.SetupLeverValuesAndComponents();
             l.UpdateIndicatorsInEditor();
 
             // f.SetupHandle();
             if (Utilities.IsValid(handleReference))
             {
                 l.handle = handleReference;
-                // handle.resetTransform = targetIndicator;
                 if (Utilities.IsValid(handlePosition))
                 {
-                    handleReference.resetTransform = handlePosition;
+                    if (handlePosition.IsChildOf(targetIndicator))
+                    {
+                        handleReference.resetTransform = handlePosition;
+                    }
+                    else if (handlePosition == targetIndicator)
+                    {
+                        Debug.LogWarning($"possible mistake: 'handle position' is the same as 'target indicator' {targetIndicator}, this will break levers");
+                        handleReference.resetTransform = handlePosition;
+                    }
+                    else
+                    {
+                        Debug.LogError(
+                            $"'handle position' {handlePosition} must be a child of 'target indicator' {targetIndicator}",
+                            this);
+                        Debug.LogWarning(
+                            $"handle position defaulted to {targetIndicator}, please assign it a child that matches the handle position and rotation");
+                        handleReference.resetTransform = targetIndicator;
+                    }
                 }
                 else
                 {
+                    Debug.LogWarning(
+                        $"handle position defaulted to {targetIndicator}, please assign it a child that matches the handle position and rotation");
                     handleReference.resetTransform = targetIndicator;
                 }
 
@@ -324,7 +344,11 @@ namespace moe.nikky.kinetic_controls.Editor
                 handleReference.Setup();
                 // handle.SetupPickupRigidbody();
                 handleReference.ResetTransform();
-                handleReference.MarkDirty();
+
+                if (!Application.isPlaying)
+                {
+                    handleReference.MarkDirty();
+                }
             }
             else
             {
@@ -371,7 +395,11 @@ namespace moe.nikky.kinetic_controls.Editor
                 );
             }
 
-            l.MarkDirty();
+
+            if (!Application.isPlaying)
+            {
+                l.MarkDirty();
+            }
         }
 
 
@@ -431,14 +459,13 @@ namespace moe.nikky.kinetic_controls.Editor
 
         void OnValidate()
         {
-            if (!initialized)
+            if (!_initialized)
             {
-                Debug.LogWarning("not initalized yet");
-                return;
+                CopyFromLever();
             }
 
             if (
-                initialized && ValidationCache.ShouldRunValidation(
+                _initialized && ValidationCache.ShouldRunValidation(
                     this,
                     HashCode.Combine(
                         HashCode.Combine(
@@ -492,6 +519,12 @@ namespace moe.nikky.kinetic_controls.Editor
         [ContextMenu("Setup Values from Lever")]
         internal void CopyFromLever()
         {
+            if (Application.isPlaying)
+            {
+                Debug.Log("is playing");
+                return;
+            }
+
             var l = GetLever();
             // lever = l;
             axis = l.axis;
@@ -537,37 +570,30 @@ namespace moe.nikky.kinetic_controls.Editor
             debugDesktopRaytrace = l.debugDesktopRaytrace;
             debugLog = l.EditorDebugLog;
 
-            initialized = true;
+            _initialized = true;
             if (!Application.isPlaying)
             {
                 this.MarkDirty();
             }
         }
 
-        private void Awake()
-        {
-            // var status = PrefabUtility.GetPrefabAssetType(gameObject);
-            
-            // var l = GetLever();
-            // if (Utilities.IsValid(l))
-            // {
-            //     lever = l;
-            // }
-            // initialized = true;
-            if (!initialized)
-            {
-                CopyFromLever();
-            }
-
-            ApplyValues(onValidate: true);
-        }
+        // private void Awake()
+        // {
+        //     if (Application.isPlaying) return;
+        //     if (!initialized)
+        //     {
+        //         CopyFromLever();
+        //     }
+        //
+        //     ApplyValues(onValidate: true);
+        // }
 #endif
 
         public bool OnPreprocess()
         {
             Debug.Log($"Preprocess: is editor: {Application.isEditor}");
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-            ApplyValues();
+            ApplyValues(onPreProcess: true);
 #else
             Debug.LogWarning("Preprocess: is not running");
 #endif

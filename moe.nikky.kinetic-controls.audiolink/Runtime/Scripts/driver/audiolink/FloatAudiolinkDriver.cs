@@ -22,6 +22,7 @@ namespace moe.nikky.kinetic_controls.driver.audiolink
 
         protected override void _PreInit()
         {
+            base._PreInit();
             InitIDs();
             _audioLinkUI = audioLinkController.audioLinkUI;
         }

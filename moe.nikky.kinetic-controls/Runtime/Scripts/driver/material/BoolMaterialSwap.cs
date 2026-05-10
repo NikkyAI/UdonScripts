@@ -34,13 +34,13 @@ namespace moe.nikky.kinetic_controls.driver.material
             
             if (value)
             {
-                Log($"setting material to enabled: {enabledMat.name}");
+                LogDebug($"setting material to enabled: {enabledMat.name}");
                 newMats[materialSlot] = enabledMat;
                 // meshRenderer.materials[materialSlot] = enabledMat;
             }
             else
             {
-                Log($"setting material to disabled: {disabledMat.name}");
+                LogDebug($"setting material to disabled: {disabledMat.name}");
                 newMats[materialSlot] = disabledMat;
                 // meshRenderer.materials[materialSlot] = disabledMat;
             }
@@ -52,32 +52,6 @@ namespace moe.nikky.kinetic_controls.driver.material
                     meshRenderer1.sharedMaterials = newMats;
                 }
             }
-            return;
-            
-            for (int j = 0; j < newMats.Length; j++)
-            {
-                if (j == materialSlot)
-                {
-                    if (value)
-                    {
-                        Log("setting material to enabled");
-                        newMats[j] = enabledMat;
-                        // meshRenderer.materials[materialSlot] = enabledMat;
-                    }
-                    else
-                    {
-                        Log("setting material to disabled");
-                        newMats[j] = disabledMat;
-                        // meshRenderer.materials[materialSlot] = disabledMat;
-                    }
-                }
-                else
-                {
-                    //newMats[j] = meshRenderer.sharedMaterials[j];
-                }
-            }
-
-            meshRenderer.sharedMaterials = newMats;
         }
         
 #if UNITY_EDITOR && !COMPILER_UDONSHARP

@@ -5,8 +5,10 @@
     "VRC.SDK3",
     "VRC.SDKBase",
     "VRC.Udon",
+    "VRC.Udon.Editor",
     "UdonSharp.Runtime",
-    "com.texelsaur.common"
+    "com.texelsaur.common",
+    "UdonSharp.Editor"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

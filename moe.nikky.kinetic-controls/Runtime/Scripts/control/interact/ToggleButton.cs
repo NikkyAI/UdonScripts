@@ -13,7 +13,7 @@ namespace moe.nikky.kinetic_controls.control.interact
     [RequireComponent(typeof(PreProcessEditorHelper))]
 #endif
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
-    public class ToggleButton : ACLBaseSimple
+    public class ToggleButton : TexelAccessControl
     {
         [Header("Toggle")] // header
         [Tooltip(
@@ -79,6 +79,7 @@ namespace moe.nikky.kinetic_controls.control.interact
 
         [SerializeField]
         [ReadOnly]
+        [NonReorderable]
         private BoolDriver[] valueBoolDrivers = { };
 
         void Start()
@@ -89,10 +90,10 @@ namespace moe.nikky.kinetic_controls.control.interact
         protected override void _Init()
         {
             base._Init();
-            Log("Initializing");
+            LogDebug("Initializing");
             DisableInteractive = true;
 
-            Log($"setting default value {defaultValue}");
+            LogDebug($"setting default value {defaultValue}");
             SyncedState = defaultValue;
 
             OnDeserialization();
@@ -133,7 +134,7 @@ namespace moe.nikky.kinetic_controls.control.interact
 
         public override void Interact()
         {
-            Log("OnInteract");
+            LogDebug("OnInteract");
             _Interact();
         }
 
@@ -162,10 +163,10 @@ namespace moe.nikky.kinetic_controls.control.interact
             base.MidiNoteOn(channel, number, velocity);
             if (!midiEnabled) return;
             
-            Log($"MidiNoteOn({channel}, {number}, {velocity})");
+            LogDebug($"MidiNoteOn({channel}, {number}, {velocity})");
             if (channel == midiChannel && number == midiNumber && velocity >= midiMinVelocity)
             {
-                Log("midi triggered");
+                LogDebug("midi triggered");
                 _Interact();
             }
         }
@@ -214,7 +215,11 @@ namespace moe.nikky.kinetic_controls.control.interact
             //     buttonCollider = button.GetComponent<Collider>();
             // }
 
-            this.MarkDirty();
+
+            if (!Application.isPlaying)
+            {
+                this.MarkDirty();
+            }
         }
 
         private void FindBoolDrivers()

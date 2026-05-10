@@ -1,17 +1,23 @@
 ﻿using JetBrains.Annotations;
 using moe.nikky.common;
+using moe.nikky.common.Editor;
 using UdonSharp;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.driver.converter
 {
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+    [RequireComponent(typeof(PreProcessEditorHelper))]
+#endif
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    public class ModernUISelectorToBool : LoggingSimple
+    public class ModernUISelectorToBool : CommonLogger
     {
         [SerializeField] private Vector2Int selectedIdMatch = Vector2Int.up;
-        [SerializeField] private GameObject boolDrivers;
-        private BoolDriver[] _boolDrivers = {};
+        [FormerlySerializedAs("boolDrivers")] //
+        [SerializeField] private GameObject boolDriverSource;
+        [SerializeField] [ReadOnly] [NonReorderable] private BoolDriver[] _boolDrivers = {};
     
         protected override string LogPrefix => nameof(ModernUISelectorToBool);
 
@@ -24,11 +30,7 @@ namespace moe.nikky.kinetic_controls.driver.converter
         {
             base._Init();
 
-            if (Utilities.IsValid(boolDrivers))
-            {
-                _boolDrivers = boolDrivers.GetComponentsInChildren<BoolDriver>();
-                Log($"found {_boolDrivers.Length} bool drivers");
-            }
+           
         }
         // ReSharper disable once InconsistentNaming
         [HideInInspector, UsedImplicitly] public int selectionId;
@@ -65,6 +67,23 @@ namespace moe.nikky.kinetic_controls.driver.converter
                 }
             }
         }
-    
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+
+        private void FindDrivers()
+        {
+            if (Utilities.IsValid(boolDriverSource))
+            {
+                //TODO: implement 
+                _boolDrivers = boolDriverSource.GetComponentsInChildren<BoolDriver>();
+                LogDebug($"found {_boolDrivers.Length} bool drivers");
+            }
+        }
+
+        public override bool OnPreprocess()
+        {
+            FindDrivers();
+            return true;
+        }
+#endif
     }
 }

@@ -1,4 +1,4 @@
-﻿// #define DEBUG_LOGGING
+// #define DEBUG_LOGGING
 
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,13 +23,14 @@ namespace moe.nikky.common.utils
 #endif
                 return true;
             }
+
             Cache[key] = hash;
-            
+
             var shouldRun = oldValue != hash;
 #if DEBUG_LOCATION
             Debug.Log($"[{nameof(ValidationCache)}] checking key: {key}, existing key, should run? {shouldRun}");
 #endif
             return shouldRun;
-        } 
+        }
     }
 }

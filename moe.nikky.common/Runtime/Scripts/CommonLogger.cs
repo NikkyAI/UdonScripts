@@ -5,40 +5,58 @@ using VRC.SDKBase;
 
 namespace moe.nikky.common
 {
-    public abstract class Logging : nikky.common.BaseBehaviour
+    // name needs to end in `Logger`
+    // methods need to start with `Log`
+    public abstract class CommonLogger : CommonBehaviour
     {
-        protected abstract DebugLog DebugLog
+        protected virtual bool LoggingIsReadOnly => false;
+
+        [Header("Logging")] // header
+        [SerializeField]
+        [ReadOnly(nameof(LoggingIsReadOnly))]
+        private DebugLog debugLog;
+
+        [SerializeField]
+        // [ReadOnly(nameof(LoggingIsReadOnly))]
+        private LogLevel logLevel = LogLevel.INFO;
+        
+        protected DebugLog DebugLog
         {
-            get;
-            set;
+            get => debugLog;
+            set => debugLog = value;
         }
+
+        private string _colorPostfix = "";
+        private string _colorPrefix = "";
+        private bool _colorsInitialized;
+        private bool _logPrefixInitialized;
+
+        private string _path = "";
+        private bool _pathInitialized;
 
         // [SerializeField] private LogLevel logLevel = LogLevel.INFO;
 
         // protected string _logPrefix;
-        private string logPrefix = "";
-        private bool _logPrefixInitialized = false;
-        private string _colorPrefix = "";
-        private string _colorPostfix = "";
-        private bool _colorsInitialized = false;
+        private string _logPrefix = "";
 
-        private string _path = "";
-        private bool _pathInitialized = false;
+        protected abstract string LogPrefix { get; }
+
+        protected virtual Color LogColor => Color.white;
 
         private void InitPath()
         {
             // Color _pathColor = new Color(.75f, .75f, .75f, 1f);
-            var _pathColor = RichTextColor.teal;
+            var pathColor = RichTextColor.teal;
 
-            Transform t = transform;
+            var t = transform;
             _path = name.Color(Color.cyan);
             t = t.parent;
             while (t != null)
             {
-                _path = $"{t.name.Color(_pathColor)} / {_path}";
+                _path = $"{t.name.Color(pathColor)} / {_path}";
                 t = t.parent;
             }
-            
+
             _path = $" / {_path}";
 
             _pathInitialized = true;
@@ -59,15 +77,9 @@ namespace moe.nikky.common
 
         private void InitLogPrefix()
         {
-            if (!_colorsInitialized)
-            {
-                InitColors();
-            }
-            if (!_pathInitialized)
-            {
-                InitPath();
-            }
-            logPrefix = $"{_colorPrefix}{LogPrefix}{_colorPostfix} @ {_path}";
+            if (!_colorsInitialized) InitColors();
+            if (!_pathInitialized) InitPath();
+            _logPrefix = $"{_colorPrefix}{LogPrefix}{_colorPostfix} @ {_path}";
             _logPrefixInitialized = true;
         }
 
@@ -75,77 +87,96 @@ namespace moe.nikky.common
         {
             base._PreInit();
 
-            if (!_logPrefixInitialized)
-            {
-                InitLogPrefix();
-            }
+            if (!_logPrefixInitialized) InitLogPrefix();
         }
 
-        protected abstract string LogPrefix { get; }
-
-        protected virtual Color LogColor => Color.white;
-
+        [HideInCallstack]
         protected void LogError(string message)
         {
-            if (!_logPrefixInitialized)
-            {
-                InitLogPrefix();
-            }
+            if (logLevel > LogLevel.ERROR) return;
+            if (!_logPrefixInitialized) InitLogPrefix();
 
             // var logPrefix = $"{_colorPrefix}{LogPrefix}{_colorPostfix} @ {_path}";
-            Debug.LogError($"[{logPrefix}] {message}", this);
+            Debug.LogError($"[{_logPrefix}] {message}", this);
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
             return;
 #endif
-            if (Utilities.IsValid(DebugLog))
-            {
-                DebugLog._WriteError(
-                    logPrefix,
+            if (Utilities.IsValid(debugLog))
+                debugLog._WriteError(
+                    _logPrefix,
                     message
                 );
-            }
         }
 
+        [HideInCallstack]
         protected void LogWarning(string message)
         {
-            if (!_logPrefixInitialized)
-            {
-                InitLogPrefix();
-            }
+            if (logLevel > LogLevel.WARN) return;
+            if (!_logPrefixInitialized) InitLogPrefix();
 
             // var logPrefix = $"{_colorPrefix}{LogPrefix}{_colorPostfix} @ {_path}";
-            Debug.LogWarning($"[{logPrefix}] {message}", this);
+            Debug.LogWarning($"[{_logPrefix}] {message}", this);
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
             return;
 #endif
-            if (Utilities.IsValid(DebugLog))
-            {
-                DebugLog._WriteError(
-                    logPrefix,
+            if (Utilities.IsValid(debugLog))
+                debugLog._WriteError(
+                    _logPrefix,
                     message
                 );
-            }
         }
 
+        [HideInCallstack]
         protected void Log(string message)
         {
-            if (!_logPrefixInitialized)
-            {
-                InitLogPrefix();
-            }
+            if (logLevel > LogLevel.INFO) return;
+            if (!_logPrefixInitialized) InitLogPrefix();
 
             // var logPrefix = $"{_colorPrefix}{LogPrefix}{_colorPostfix} @ {_path}";
-            Debug.Log($"[{logPrefix}] {message}", this);
+            Debug.Log($"[{_logPrefix}] {message}", this);
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
             return;
 #endif
-            if (Utilities.IsValid(DebugLog))
-            {
-                DebugLog._Write(
-                    logPrefix,
+            if (Utilities.IsValid(debugLog))
+                debugLog._Write(
+                    _logPrefix,
                     message
                 );
-            }
+        }
+        [HideInCallstack]
+        protected void LogDebug(string message)
+        {
+            if (logLevel > LogLevel.DEBUG) return;
+            if (!_logPrefixInitialized) InitLogPrefix();
+            
+            
+            // var logPrefix = $"{_colorPrefix}{LogPrefix}{_colorPostfix} @ {_path}";
+            Debug.Log($"[{_logPrefix}] {message}", this);
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+            return;
+#endif
+            if (Utilities.IsValid(debugLog))
+                debugLog._Write(
+                    _logPrefix,
+                    message
+                );
+        }
+
+        [HideInCallstack]
+        protected void LogAssertion(string message)
+        {
+            if (!_logPrefixInitialized) InitLogPrefix();
+            
+            // var logPrefix = $"{_colorPrefix}{LogPrefix}{_colorPostfix} @ {_path}";
+            Debug.LogAssertion($"[{_logPrefix}] {message}", this);
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+            return;
+#endif
+            if (Utilities.IsValid(debugLog))
+                debugLog._Write(
+                    _logPrefix,
+                    message
+                );
         }
 
         /*
@@ -198,26 +229,11 @@ namespace moe.nikky.common
             }
         }
         */
-
-        protected void LogAssert(string message)
-        {
-            var logPrefix = $"{_colorPrefix}{LogPrefix}{_colorPostfix}";
-            Debug.LogAssertion($"[{logPrefix}] {message}", this);
-#if UNITY_EDITOR && !COMPILER_UDONSHARP
-            return;
-#endif
-            if (Utilities.IsValid(DebugLog))
-            {
-                DebugLog._Write(
-                    logPrefix,
-                    message
-                );
-            }
-        }
+        
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
         public DebugLog EditorDebugLog
         {
-            get => DebugLog;
+            get => debugLog;
             set
             {
                 // if (value != null)
@@ -228,12 +244,9 @@ namespace moe.nikky.common
                 // {
                 //     Log($"Setting DebugLog to null on {name}");
                 // }
-                if (DebugLog != value)
-                {
-                    EditorUtility.SetDirty(this);
-                }
+                if (debugLog != value) EditorUtility.SetDirty(this);
 
-                DebugLog = value;
+                debugLog = value;
             }
         }
 #endif

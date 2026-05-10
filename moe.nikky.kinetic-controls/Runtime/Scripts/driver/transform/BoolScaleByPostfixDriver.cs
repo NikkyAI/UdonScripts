@@ -19,8 +19,8 @@ namespace moe.nikky.kinetic_controls.driver.transform
         [SerializeField] private string onTargetsPostfix = "S2";
         // [SerializeField] private bool disableOtherChildren = true;
 
-        [SerializeField] [ReadOnly] private Transform[] targetsOn = { };
-        [SerializeField] [ReadOnly] private Transform[] targetsOff = { };
+        [SerializeField] [ReadOnly] [NonReorderable] private Transform[] targetsOn = { };
+        [SerializeField] [ReadOnly] [NonReorderable] private Transform[] targetsOff = { };
 
         protected override string LogPrefix => nameof(BoolScaleByPostfixDriver);
 
@@ -41,7 +41,7 @@ namespace moe.nikky.kinetic_controls.driver.transform
             {
                 if (Utilities.IsValid(obj))
                 {
-                    Log($"update scale of {obj} to {value}");
+                    LogDebug($"update scale of {obj} to {value}");
                     obj.localScale = value ? Vector3.one : Vector3.zero;
                 }
             }
@@ -50,7 +50,7 @@ namespace moe.nikky.kinetic_controls.driver.transform
             {
                 if (Utilities.IsValid(obj))
                 {
-                    Log($"update scale of {obj} to {!value}");
+                    LogDebug($"update scale of {obj} to {!value}");
                     obj.localScale = !value ? Vector3.one : Vector3.zero;
                 }
             }
@@ -60,8 +60,11 @@ namespace moe.nikky.kinetic_controls.driver.transform
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
         public override void ApplyBoolValue(bool value)
         {
-            OnUpdateBool(value);
-            this.MarkDirty();
+            if (!Application.isPlaying)
+            {
+                OnUpdateBool(value);
+                this.MarkDirty();
+            }
         }
 
         public override bool OnPreprocess()

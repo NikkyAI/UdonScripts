@@ -17,7 +17,7 @@ namespace moe.nikky.kinetic_controls.driver.control.kinetic
         [SerializeField]
         private GameObject smoothedControlSource;
 
-        [SerializeField] [ReadOnly] private SmoothedControl[] smoothedControls = { };
+        [SerializeField] [ReadOnly] [NonReorderable] private SmoothedControl[] smoothedControls = { };
 
         protected override string LogPrefix => nameof(IntSmoothingFramesDriver);
 
@@ -42,7 +42,10 @@ namespace moe.nikky.kinetic_controls.driver.control.kinetic
                     behaviour.SmoothingFrames = value;
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-                    behaviour.MarkDirty();
+                    if (!Application.isPlaying)
+                    {
+                        behaviour.MarkDirty();
+                    }
 #endif
                 }
             }

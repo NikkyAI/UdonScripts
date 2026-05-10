@@ -44,13 +44,13 @@ namespace moe.nikky.kinetic_controls.driver.material
             materialSource.GetPropertyBlock(_propertyBlock, materialIndex);
             if (value)
             {
-                Log($"applying texture {enabledTexture}");
+                LogDebug($"applying texture {enabledTexture}");
                 _propertyBlock.SetTexture(_propertyId, enabledTexture, RenderTextureSubElement.Color);
                 // _propertyBlock.SetTexture(_propertyId, enabledTexture);
             }
             else
             {
-                Log($"applying texture {disabledTexture}");
+                LogDebug($"applying texture {disabledTexture}");
                 _propertyBlock.SetTexture(_propertyId, disabledTexture, RenderTextureSubElement.Color);
             }
             materialSource.SetPropertyBlock(_propertyBlock, materialIndex);

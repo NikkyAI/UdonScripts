@@ -9,8 +9,17 @@ using VRC.SDKBase;
 namespace moe.nikky.kinetic_controls.control
 {
     //TODO: rename to TweenControl ?
-    public abstract class SmoothedControl : ACLBaseReadonly
+    public abstract class SmoothedControl : TexelAccessControl
     {
+// #if UNITY_EDITOR && !COMPILER_UDONSHARP
+//         public SmoothedControl()
+//         {
+//             aclReadOnly = true;
+//         }
+// #endif
+        protected override bool AccessControlIsReadOnly => true;
+        protected override bool LoggingIsReadOnly => true;
+
         protected abstract float MinPosOrRot { get; }
 
         protected abstract float MaxPosOrRot { get; }
@@ -56,20 +65,26 @@ namespace moe.nikky.kinetic_controls.control
 #if READONLY
         [ReadOnly]
 #endif
-        [Obsolete]
         internal GameObject floatTargetValueDrivers;
 
         [SerializeField]
 #if READONLY
         [ReadOnly]
 #endif
-        [Obsolete]
         internal GameObject floatSmoothedValueDrivers;
 
-        [SerializeField, ReadOnly, NonReorderable]
+#if READONLY
+        [ReadOnly]
+        [NonReorderable]
+#endif
+        [SerializeField]
         public FloatDriver[] targetValueFloatDrivers = Array.Empty<FloatDriver>();
 
-        [SerializeField, ReadOnly, NonReorderable]
+#if READONLY
+        [ReadOnly]
+        [NonReorderable]
+#endif
+        [SerializeField]
         internal FloatDriver[] smoothedValueFloatDrivers = Array.Empty<FloatDriver>();
 
         #endregion
@@ -163,65 +178,10 @@ namespace moe.nikky.kinetic_controls.control
         //     enableValueSmoothing = enableValueSmoothing && smoothingUpdateInterval > 0;
         // }
 
-        internal void FindDrivers()
-        {
-            if (Utilities.IsValid(floatSmoothedValueDrivers))
-            {
-                smoothedValueFloatDrivers =
-                    floatSmoothedValueDrivers.gameObject.GetComponentsInChildren<FloatDriver>();
-                // Log($"found {_smoothedValueFloatDrivers.Length} drivers for value");
-            }
-            else
-            {
-                LogError("missing object for float value drivers");
-            }
-
-            if (Utilities.IsValid(floatTargetValueDrivers))
-            {
-                targetValueFloatDrivers = floatTargetValueDrivers.GetComponentsInChildren<FloatDriver>();
-                // Log($"found {_targetValueFloatDrivers.Length} drivers for target");
-            }
-            else
-            {
-                LogError("missing object for float target drivers");
-            }
-
-            // if (_smoothedValueFloatDrivers != null)
-            // {
-            //     Log($"found {_smoothedValueFloatDrivers.Length} drivers for value");
-            // }
-            //
-            // if (_targetValueFloatDrivers != null)
-            // {
-            //     Log($"found {_targetValueFloatDrivers.Length} drivers for target");
-            // }
-        }
-
-        private void SetupSmoothedControlValues()
-        {
-            //TODO: move into running in editor ?
-
-            if (smoothedValueFloatDrivers != null)
-            {
-                Log($"found {smoothedValueFloatDrivers.Length} drivers for value");
-            }
-
-            if (targetValueFloatDrivers != null)
-            {
-                Log($"found {targetValueFloatDrivers.Length} drivers for target");
-            }
-
-            defaultValueNormalized = Mathf.Clamp01(defaultValueNormalized);
-            smoothedCurrentNormalized = defaultValueNormalized;
-            smoothingTargetNormalized = defaultValueNormalized;
-        }
-
         protected override void _Init()
         {
             base._Init();
-
             // FindDrivers();
-            SetupSmoothedControlValues();
 
             defaultValueNormalized = Mathf.Clamp01(defaultValueNormalized);
             smoothedCurrentNormalized = defaultValueNormalized;
@@ -360,7 +320,7 @@ namespace moe.nikky.kinetic_controls.control
                 Mathf.Abs(smoothingTargetNormalized - smoothedCurrentNormalized) <= Epsilon)
             {
                 smoothedCurrentNormalized = smoothingTargetNormalized;
-                Log($"value reached target {smoothingTargetNormalized}");
+                LogDebug($"value reached target {smoothingTargetNormalized}");
                 _isSmoothing = false;
             }
             else
@@ -386,10 +346,12 @@ namespace moe.nikky.kinetic_controls.control
         public virtual void Reset()
         {
             if (!IsAuthorized) return;
-            Log("re-setting synced to default");
+            Log("re-setting value to default");
 
             SetValue(defaultValueNormalized);
         }
+        
+        //TODO: implement SetValueImmediate that skips smoothing
 
         public virtual void SetValue(float normalizedValue)
         {
@@ -495,7 +457,41 @@ namespace moe.nikky.kinetic_controls.control
         // private float prevDefaultNormalized, prevDefault, prevMin, prevMax;
         // private int lastHashSmoothedBase = 0;
         // ReSharper restore InconsistentNaming
+
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
+        internal void FindDrivers()
+        {
+            if (Utilities.IsValid(floatSmoothedValueDrivers))
+            {
+                smoothedValueFloatDrivers =
+                    floatSmoothedValueDrivers.gameObject.GetComponentsInChildren<FloatDriver>();
+                // Log($"found {_smoothedValueFloatDrivers.Length} drivers for value");
+            }
+            else
+            {
+                LogError("missing object for float value drivers");
+            }
+
+            if (Utilities.IsValid(floatTargetValueDrivers))
+            {
+                targetValueFloatDrivers = floatTargetValueDrivers.GetComponentsInChildren<FloatDriver>();
+                // Log($"found {_targetValueFloatDrivers.Length} drivers for target");
+            }
+            else
+            {
+                LogError("missing object for float target drivers");
+            }
+
+            if (smoothedValueFloatDrivers != null)
+            {
+                LogDebug($"found {smoothedValueFloatDrivers.Length} drivers for value");
+            }
+
+            if (targetValueFloatDrivers != null)
+            {
+                LogDebug($"found {targetValueFloatDrivers.Length} drivers for target");
+            }
+        }
 
         // public override bool OnPreprocess()
         // {
@@ -503,88 +499,8 @@ namespace moe.nikky.kinetic_controls.control
         //
         //     return base.OnPreprocess();
         // }
-        //
-        // protected override void OnValidate()
-        // {
-        //     if (Application.isPlaying) return;
-        //     base.OnValidate();
-        //
-        //     if (
-        //         ValidationCache.ShouldRunValidation(
-        //             this,
-        //             HashCode.Combine(
-        //                 MinPosOrRot,
-        //                 MinPosOrRot,
-        //                 MinValue,
-        //                 MaxValue,
-        //                 defaultValueNormalized,
-        //                 defaultValue
-        //             )
-        //         )
-        //     )
-        //     {
-        //         ApplyValues();
-        //     }
-        // }
-        //
-        // [ContextMenu("Apply Values")]
-        // public virtual void ApplyValues()
-        // {
-        //     _EnsureInit();
-        //
-        //     //TODO move to helper script ?
-        //     if (prevDefaultNormalized != defaultValueNormalized)
-        //     {
-        //         defaultValue = Mathf.Lerp(MinValue, MaxValue, defaultValueNormalized);
-        //         prevDefault = defaultValue;
-        //     }
-        //
-        //     if (prevDefault != defaultValue)
-        //     {
-        //         defaultValueNormalized = Mathf.InverseLerp(MinValue, MaxValue, defaultValue);
-        //         // _normalizedDefault = defaultValueNormalized;
-        //         prevDefaultNormalized = defaultValueNormalized;
-        //     }
-        //
-        //     if (prevMin != MinValue || prevMax != MaxValue)
-        //     {
-        //         defaultValueNormalized = Mathf.InverseLerp(MinValue, MaxValue, defaultValue);
-        //         // _normalizedDefault = defaultValueNormalized;
-        //         prevDefaultNormalized = defaultValueNormalized;
-        //
-        //         prevMin = MinValue;
-        //         prevMax = MaxValue;
-        //     }
-        //
-        //     prevDefaultNormalized = defaultValueNormalized;
-        //     prevDefault = defaultValue;
-        //
-        //     UpdateValueIndicator(
-        //         Mathf.Lerp(MinPosOrRot, MaxPosOrRot, defaultValueNormalized)
-        //     );
-        //     UpdateTargetIndicator(
-        //         Mathf.Lerp(MinPosOrRot, MaxPosOrRot, defaultValueNormalized)
-        //     );
-        //
-        //     var minValue = Mathf.Min(MinValue, MaxValue);
-        //     var maxValue = Mathf.Max(MinValue, MaxValue);
-        //
-        //     foreach (var valueFloatDriver in _smoothedValueFloatDrivers)
-        //     {
-        //         valueFloatDriver.ApplyFloatValue(
-        //             Math.Clamp(defaultValue, minValue, maxValue)
-        //         );
-        //     }
-        //
-        //     foreach (var targetFloatDriver in _targetValueFloatDrivers)
-        //     {
-        //         targetFloatDriver.ApplyFloatValue(
-        //             Math.Clamp(defaultValue, minValue, maxValue)
-        //         );
-        //     }
-        // }
 
-        internal void UpdateIndicatorsInEditor()
+        internal virtual void UpdateIndicatorsInEditor()
         {
             UpdateValueIndicator(
                 Mathf.Lerp(MinPosOrRot, MaxPosOrRot, defaultValueNormalized)

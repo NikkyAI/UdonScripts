@@ -34,7 +34,7 @@ namespace moe.nikky.kinetic_controls.driver.material
             
             if (value)
             {
-                Log($"applying texture {enabledTexture}");
+                LogDebug($"applying texture {enabledTexture}");
                 for (var i = 0; i < materials.Length; i++)
                 {
                     materials[i].SetTexture(_propertyId, enabledTexture);
@@ -42,7 +42,7 @@ namespace moe.nikky.kinetic_controls.driver.material
             }
             else
             {
-                Log($"applying texture {disabledTexture}");
+                LogDebug($"applying texture {disabledTexture}");
                 for (var i = 0; i < materials.Length; i++)
                 {
                     materials[i].SetTexture(_propertyId, disabledTexture);

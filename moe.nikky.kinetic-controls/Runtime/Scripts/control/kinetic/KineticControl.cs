@@ -70,9 +70,9 @@ namespace moe.nikky.kinetic_controls.control.kinetic
 
                 var prevValue = SyncedValueNormalized;
                 TakeOwnership();
-                Log($"set synced to {value}");
+                LogDebug($"set synced to {value}");
                 synced = value;
-                Log($"set value to {SyncedValueNormalized} => {prevValue}");
+                LogDebug($"set value to {SyncedValueNormalized} => {prevValue}");
                 SyncedValueNormalized = prevValue;
 
                 RequestSerialization();
@@ -86,7 +86,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
         protected override void _Init()
         {
             base._Init();
-            Log("Base KineticControl Init");
+            LogDebug("Base KineticControl Init");
             if (Utilities.IsValid(handle))
             {
                 handle.RegisterRuntime(this);
@@ -162,11 +162,11 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             base.MidiControlChange(channel, number, value);
             if (!midiEnabled) return;
             
-            Log($"MidiControlChange({channel}, {number}, {value})");
+            LogDebug($"MidiControlChange({channel}, {number}, {value})");
             if (channel == midiChannel && number == midiNumber)
             {
                 float normalizedValue = Mathf.InverseLerp(midiInputRangeStart, midiInputRangeEnd, value);
-                Log($"normalized value: {normalizedValue}");
+                LogDebug($"normalized value: {normalizedValue}");
                 SetValue(normalizedValue);
             }
         }

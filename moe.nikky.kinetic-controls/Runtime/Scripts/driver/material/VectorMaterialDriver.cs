@@ -48,7 +48,7 @@ namespace moe.nikky.kinetic_controls.driver.material
             for (var i = 0; i < propertyNames.Length; i++)
             {
                 _propertyIds[i] = VRCShader.PropertyToID(propertyNames[i]);
-                Log($"property {propertyNames[i]} => {_propertyIds[i]}");
+                LogDebug($"property {propertyNames[i]} => {_propertyIds[i]}");
             }
         }
 
@@ -62,12 +62,15 @@ namespace moe.nikky.kinetic_controls.driver.material
                 var mat = materials[i];
                 for (var j = 0; j < _propertyIds.Length; j++)
                 {
-                    Log($"Set {propertyNames[j]} to {value}");
+                    LogDebug($"Set {propertyNames[j]} to {value}");
                     mat.SetVector(_propertyIds[j], value);
                 }
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-                mat.MarkDirty();
+                if (!Application.isPlaying)
+                {
+                    mat.MarkDirty();
+                }
 #endif
             }
 

@@ -1,58 +1,53 @@
-﻿using System;
-using System.ComponentModel;
+﻿using moe.nikky.common.Editor;
 using Texel;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.Serialization;
 using VRC;
 using VRC.SDKBase;
-using VRC.Udon.Common.Enums;
 
 namespace moe.nikky.common
 {
-    public abstract class ACLBase : Logging
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+    [RequireComponent(typeof(PreProcessEditorHelper))]
+#endif
+    public abstract class TexelAccessControl : CommonLogger
     {
-        
-        protected abstract bool EnforceACL
+        // [SerializeField, HideInInspector]
+        // [NonSerialized]
+        // public bool aclReadOnly = false;
+        protected virtual bool AccessControlIsReadOnly => false;
+
+        [Header("Access Control")] // header
+        [SerializeField]
+        [ReadOnly(nameof(AccessControlIsReadOnly))]
+        private bool enforceACL = true;
+
+        [Tooltip("ACL used to check who can use the toggle")] //
+        [SerializeField]
+        [ReadOnly(nameof(AccessControlIsReadOnly))]
+        private AccessControl accessControl;
+
+        [SerializeField] //
+        [Tooltip("object containing bool drivers, drivers will be updated with current auth status")]
+        [ReadOnly(nameof(AccessControlIsReadOnly))]
+        private GameObject boolAuthorizedDrivers;
+
+        [SerializeField] [ReadOnly] [NonReorderable]
+        protected BoolDriver[] authorizedDrivers = { };
+
+        protected bool IsAuthorized { get; private set; }
+
+
+        protected bool EnforceACL
         {
-            get;
-            set;
+            get => enforceACL;
+            private set => enforceACL = value;
         }
 
-        protected abstract AccessControl AccessControl
+        protected AccessControl AccessControl
         {
-            get ;
-            set ;
+            get => accessControl;
+            private set => accessControl = value;
         }
-
-        protected abstract GameObject BoolAuthorizedDrivers
-        {
-            get;
-            set;
-        }
-        
-        // [Header("Access Control")]
-        // [SerializeField] 
-        // [ReadOnly]
-        // protected BoolDriver[] authorizedDrivers = { };
-
-        protected abstract BoolDriver[] AuthorizedDrivers
-        {
-            get;
-            set;
-        }
-
-        // [SerializeField] //
-        // [Tooltip("object containing bool drivers, will be updated with current auth status")]
-        // //
-        // [FormerlySerializedAs("boolAuthorizedDrivers")] //
-        // private Transform boolAuthorizedDriversTransform;
-        
-
-        // [SerializeField] private bool editorIsAuthorized = false;
-
-        private bool _isAuthorized = false;
-        protected bool IsAuthorized => _isAuthorized;
 
         protected override void _Init()
         {
@@ -79,22 +74,22 @@ namespace moe.nikky.common
                 else
                 {
                     LogError($"No ACL set on {name}");
-                    _isAuthorized = false;
+                    IsAuthorized = false;
                     AccessChanged();
                 }
             }
             else
             {
                 Log("not using ACL, setting isAuthorized to true");
-                _isAuthorized = true;
+                IsAuthorized = true;
                 AccessChanged();
             }
         }
 
         public void _TXL_ACL_OnValidate()
         {
-            bool oldAuth = IsAuthorized;
-            _isAuthorized = AccessControl._LocalHasAccess();
+            var oldAuth = IsAuthorized;
+            IsAuthorized = AccessControl._LocalHasAccess();
             if (IsAuthorized != oldAuth)
             {
                 // TODO: move to Base class to reduce lookups
@@ -107,11 +102,8 @@ namespace moe.nikky.common
 
                 Log($"setting isAuthorized to {IsAuthorized} for {LocalPlayerName}");
 
-                Log($"updating {AuthorizedDrivers.Length} drivers");
-                for (var i = 0; i < AuthorizedDrivers.Length; i++)
-                {
-                    AuthorizedDrivers[i].OnUpdateBool(IsAuthorized);
-                }
+                Log($"updating {authorizedDrivers.Length} drivers");
+                for (var i = 0; i < authorizedDrivers.Length; i++) authorizedDrivers[i].OnUpdateBool(IsAuthorized);
 
                 AccessChanged();
             }
@@ -138,12 +130,10 @@ namespace moe.nikky.common
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
         public void FindBoolAuthDrivers()
         {
-            if (Utilities.IsValid(BoolAuthorizedDrivers))
-            {
+            if (Utilities.IsValid(boolAuthorizedDrivers))
                 // Log($"loading auth drivers");
-                AuthorizedDrivers = BoolAuthorizedDrivers.GetComponentsInChildren<BoolDriver>();
-                // Log($"found {AuthorizedDrivers.Length} auth bool drivers");
-            }
+                authorizedDrivers = boolAuthorizedDrivers.GetComponentsInChildren<BoolDriver>();
+            // Log($"found {AuthorizedDrivers.Length} auth bool drivers");
         }
 #endif
 
@@ -181,10 +171,7 @@ namespace moe.nikky.common
             get => AccessControl;
             set
             {
-                if (AccessControl != value)
-                {
-                    this.MarkDirty();
-                }
+                if (AccessControl != value) this.MarkDirty();
 
                 AccessControl = value;
             }
@@ -195,30 +182,33 @@ namespace moe.nikky.common
             get => EnforceACL;
             set
             {
-                if (EnforceACL != value)
-                {
-                    this.MarkDirty();
-                }
+                if (EnforceACL != value) this.MarkDirty();
                 // Log($"Setting EnforceACL to {value} on {name}");
                 EnforceACL = value;
-
             }
         }
 
         public GameObject EditorBoolAuthorizedDrivers
         {
-            get => BoolAuthorizedDrivers;
+            get => boolAuthorizedDrivers;
             set
             {
-                if (BoolAuthorizedDrivers != value)
-                {
-                    this.MarkDirty();
-                }
+                if (boolAuthorizedDrivers != value) this.MarkDirty();
                 // Log($"Setting BoolAuthorizedDrivers to {value} on {name}");
-                BoolAuthorizedDrivers = value;
+                boolAuthorizedDrivers = value;
             }
         }
 
+#endif
+
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+        public override bool OnPreprocess()
+        {
+            if (!base.OnPreprocess()) return false;
+            FindBoolAuthDrivers();
+
+            return true;
+        }
 #endif
     }
 }

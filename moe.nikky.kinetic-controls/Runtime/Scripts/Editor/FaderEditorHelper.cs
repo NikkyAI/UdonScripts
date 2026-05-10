@@ -225,16 +225,16 @@ namespace moe.nikky.kinetic_controls.Editor
         private Fader GetFader() => gameObject.GetComponent<Fader>();
 
         [ContextMenu("ApplyValues")]
-        private void ApplyValues()
+        private void ApplyValuesContext()
         {
-            ApplyValues(onValidate: false);
+            ApplyValues(onValidate: false, onPreProcess: false);
         }
 
-        private void ApplyValues(bool onValidate = false)
+        private void ApplyValues(bool onValidate = false, bool onPreProcess = false)
         {
-            if (!_initialized)
+            if (!onPreProcess && !_initialized)
             {
-                Debug.LogWarning("not initalized yet");
+                Debug.LogWarning("not initalized yet", this);
                 return;
             }
 
@@ -318,15 +318,34 @@ namespace moe.nikky.kinetic_controls.Editor
             if (Utilities.IsValid(handleReference))
             {
                 f.handle = handleReference;
-                // handle.resetTransform = targetIndicator;
+                
                 if (Utilities.IsValid(handlePosition))
                 {
-                    //TODO: validate that handlePosition is a child of targetIndicator
+                    if (handlePosition.IsChildOf(targetIndicator))
+                    {
+                        handleReference.resetTransform = handlePosition;
 
-                    handleReference.resetTransform = handlePosition;
+                        if (!Mathf.Approximately(handlePosition.position[(int)axis], targetIndicator.position[(int)axis]))
+                        {
+                            Debug.LogError($"possible mistake: {handlePosition} has a offset on the fader movement axis ({axis}) relative to {targetIndicator}, this WILL lead to the fader breaking", this);
+                            Debug.LogError($"click here to find the handle position: {handlePosition.name}", handlePosition);
+                        }
+                    }
+                    else if (handlePosition == targetIndicator)
+                    {
+                        // this is fine for faders
+                        handleReference.resetTransform = handlePosition;
+                    }
+                    else
+                    {
+                        Debug.LogError($"'handle position' {handlePosition} must be a child of 'target indicator' {targetIndicator}", this);
+                        Debug.LogWarning($"handle position defaulted to {targetIndicator}, please assign it a child that matches the handle position and rotation");
+                        handleReference.resetTransform = targetIndicator;
+                    }
                 }
                 else
                 {
+                    Debug.LogWarning($"handle position defaulted to {targetIndicator}, please assign it a child that matches the handle position and rotation");
                     handleReference.resetTransform = targetIndicator;
                 }
 
@@ -344,7 +363,10 @@ namespace moe.nikky.kinetic_controls.Editor
 
                 // handle.SetupPickupRigidbody();
                 handleReference.ResetTransform();
-                handleReference.MarkDirty();
+                if (!Application.isPlaying)
+                {
+                    handleReference.MarkDirty();
+                }
             }
             else
             {
@@ -391,7 +413,11 @@ namespace moe.nikky.kinetic_controls.Editor
                 );
             }
 
-            f.MarkDirty();
+
+            if (!Application.isPlaying)
+            {
+                f.MarkDirty();
+            }
         }
 
         protected void SetupMidiListener(bool onValidate = false)
@@ -505,13 +531,19 @@ namespace moe.nikky.kinetic_controls.Editor
                 )
             )
             {
-                ApplyValues(onValidate: true);
+                ApplyValues(onValidate: true, onPreProcess:false);
             }
         }
 
         [ContextMenu("Setup Values from Fader")]
         internal void CopyFromFader()
         {
+            if (Application.isPlaying)
+            {
+                Debug.Log("is playing");
+                return;
+            }
+
             var f = GetFader();
             // fader = f;
             axis = f.axis;
@@ -569,31 +601,29 @@ namespace moe.nikky.kinetic_controls.Editor
             midiInputRangeEnd = f.midiInputRangeEnd;
 
             _initialized = true;
-            this.MarkDirty();
-        }
-
-        private void Awake()
-        {
-            // var f = GetFader();
-            // if (Utilities.IsValid(f))
-            // {
-            //     fader = f;
-            // }
-            // initialized = true;
-            if (!_initialized)
+            if(!Application.isPlaying)
             {
-                CopyFromFader();
+                this.MarkDirty();
             }
-
-            ApplyValues(onValidate: true);
         }
+
+        // private void Awake()
+        // {
+        //     if (Application.isPlaying) return;
+        //     if (!_initialized)
+        //     {
+        //         CopyFromFader();
+        //     }
+        //
+        //     ApplyValues(onValidate: true);
+        // }
 #endif
 
         public bool OnPreprocess()
         {
             Debug.Log($"Preprocess: is editor: {Application.isEditor}");
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-            ApplyValues();
+            ApplyValues(onValidate: false, onPreProcess:true);
 #else
             Debug.LogWarning("Preprocess: is not running");
 #endif

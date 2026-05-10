@@ -35,7 +35,7 @@ namespace moe.nikky.kinetic_controls.driver.converter
         {
             if (!enabled) return;
             Color color = value ? colorEnabled : colorDisabled;
-            Log($"updating color: {value} -> {color} on {_colorDrivers.Length} drivers");
+            LogDebug($"updating color: {value} -> {color} on {_colorDrivers.Length} drivers");
             for (var i = 0; i < _colorDrivers.Length; i++)
             {
                 _colorDrivers[i].OnUpdateColor(color);

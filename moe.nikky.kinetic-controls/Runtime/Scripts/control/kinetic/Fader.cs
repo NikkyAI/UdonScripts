@@ -47,6 +47,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
         [ReadOnly]
 #endif
         internal float minPos;
+
         protected override float MinPosOrRot => minPos;
 
         [SerializeField]
@@ -61,6 +62,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
         [ReadOnly]
 #endif
         internal float maxPos;
+
         protected override float MaxPosOrRot => maxPos;
 
         [SerializeField]
@@ -109,10 +111,11 @@ namespace moe.nikky.kinetic_controls.control.kinetic
 
         private void SetupFaderValuesAndComponents()
         {
-            Log("SetupValuesAndComponents");
+            LogDebug("SetupValuesAndComponents");
 
             _targetIndicatorValid = Utilities.IsValid(targetIndicator);
             _valueIndicatorValid = Utilities.IsValid(valueIndicator);
+            _axisVector = Vector3.zero;
             _axisVector[(int)axis] = 1;
 
             // var minLocalPos = transform.InverseTransformPoint(minLimitIndicator.position);
@@ -160,15 +163,15 @@ namespace moe.nikky.kinetic_controls.control.kinetic
                 maxPos,
                 clampedPos
             );
-            Log($"calculating normalized value from {absolutePos} -> {clampedPos} -> {normalizedValue}");
+            LogDebug($"calculating normalized value from {absolutePos} -> {clampedPos} -> {normalizedValue}");
             return normalizedValue;
         }
 
         public override void FollowPickup()
         {
-                Log("getting normalized value from pickup position");
-                // SyncedValueNormalized = PosToNormalized(Pickup.transform.position);
-                OnMoveHandle(handle.transform.position);
+            LogDebug("getting normalized value from pickup position");
+            // SyncedValueNormalized = PosToNormalized(Pickup.transform.position);
+            OnMoveHandle(handle.transform.position);
         }
 
         public override void FollowDesktop()
@@ -188,7 +191,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             if (desktopRaycastCollider.Raycast(ray, out var hit, 5))
             {
                 var hitPosition = ray.GetPoint(hit.distance);
-                Log($"raycast hit, distance: {hit.distance}, point: {hitPosition}");
+                LogDebug($"raycast hit, distance: {hit.distance}, point: {hitPosition}");
                 // var localHit = transform.InverseTransformPoint(hitPosition);
 
                 if (Utilities.IsValid(debugDesktopRaytrace))
@@ -231,7 +234,10 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             }
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-            targetIndicator.transform.MarkDirty();
+            if (!Application.isPlaying)
+            {
+                targetIndicator.transform.MarkDirty();
+            }
 #endif
         }
 
@@ -244,7 +250,10 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             valueIndicator.transform.localPosition = newPos;
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-            valueIndicator.transform.MarkDirty();
+            if (!Application.isPlaying)
+            {
+                valueIndicator.transform.MarkDirty();
+            }
 #endif
         }
 

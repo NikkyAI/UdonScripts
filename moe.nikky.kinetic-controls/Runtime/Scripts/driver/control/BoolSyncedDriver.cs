@@ -18,7 +18,7 @@ namespace moe.nikky.kinetic_controls.driver.control
         [SerializeField]
         private GameObject syncedBehaviourSource;
 
-        [SerializeField] [ReadOnly] private BaseBehaviour[] baseBehaviours;
+        [SerializeField] [ReadOnly] [NonReorderable] private CommonBehaviour[] baseBehaviours;
 
         protected override string LogPrefix => nameof(BoolSyncedDriver);
 
@@ -32,7 +32,10 @@ namespace moe.nikky.kinetic_controls.driver.control
                 {
                     behaviour.NetworkSynced = value;
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-                    behaviour.MarkDirty();
+                    if (!Application.isPlaying)
+                    {
+                        behaviour.MarkDirty();
+                    }
 #endif
                 }
             }
@@ -50,10 +53,10 @@ namespace moe.nikky.kinetic_controls.driver.control
         private void FindBaseBehaviours()
         {
             // _valueBoolDrivers = _valueBoolDrivers.AddRange(gameObject.GetComponents<BoolDriver>());
-            baseBehaviours = Array.Empty<BaseBehaviour>();
+            baseBehaviours = Array.Empty<CommonBehaviour>();
             if (Utilities.IsValid(syncedBehaviourSource))
             {
-                baseBehaviours = syncedBehaviourSource.GetComponentsInChildren<BaseBehaviour>();
+                baseBehaviours = syncedBehaviourSource.GetComponentsInChildren<CommonBehaviour>();
             }
             
             Log($"found {baseBehaviours.Length} base behaviours");

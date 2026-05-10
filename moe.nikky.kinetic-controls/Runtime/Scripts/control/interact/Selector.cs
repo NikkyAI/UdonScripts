@@ -14,7 +14,7 @@ namespace moe.nikky.kinetic_controls.control.interact
     [RequireComponent(typeof(PreProcessEditorHelper))]
 #endif
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
-    public class Selector : ACLBaseSimple
+    public class Selector : TexelAccessControl
     {
         [Header("Selector")] // header
         [SerializeField]
@@ -58,13 +58,13 @@ namespace moe.nikky.kinetic_controls.control.interact
         [SerializeField]
         private GameObject intDriverSource;
 
-        [SerializeField] [ReadOnly] private IntDriver[] intDrivers = { };
+        [SerializeField] [ReadOnly] [NonReorderable] private IntDriver[] intDrivers = { };
 
         protected override string LogPrefix => nameof(Selector);
 
         //TODO: replace with Texel.InteractTrigger and handle ACL centrally ???
 
-        [SerializeField] [ReadOnly] private SelectorCallback[] interactCallbacks = { };
+        [SerializeField] [ReadOnly] [NonReorderable] private SelectorCallback[] interactCallbacks = { };
 
         private BoolDriver[][] _boolDrivers = { };
 
@@ -74,6 +74,7 @@ namespace moe.nikky.kinetic_controls.control.interact
         [UdonSynced]
         private bool networkSynced = true;
 
+        private int cachedPrevValue = int.MinValue;
         public override bool NetworkSynced
         {
             get => networkSynced;
@@ -81,14 +82,29 @@ namespace moe.nikky.kinetic_controls.control.interact
             {
                 if (!IsAuthorized) return;
 
-                var prevValue = _syncedIndex;
+                cachedPrevValue = _syncedIndex;
                 TakeOwnership();
                 Log($"set synced to {value}");
                 networkSynced = value;
-                Log($"set index to {_syncedIndex} => {prevValue}");
-                _syncedIndex = prevValue;
+                if (Networking.IsOwner(gameObject))
+                {
+                    Log($"set index to {_syncedIndex} => {cachedPrevValue}");
+                    _syncedIndex = cachedPrevValue;
+                }
+                //TODO: await the ownership transfer properly ?
 
                 RequestSerialization();
+            }
+        }
+
+        public override void OnOwnershipTransferred(VRCPlayerApi player)
+        {
+            base.OnOwnershipTransferred(player);
+
+            if (player == LocalPlayer && cachedPrevValue != int.MinValue)
+            {
+                LogDebug($"set index to {_syncedIndex} => {cachedPrevValue}");
+                _syncedIndex = cachedPrevValue;
             }
         }
 
@@ -157,7 +173,7 @@ namespace moe.nikky.kinetic_controls.control.interact
         {
             if (networkSynced)
             {
-                Log("taking ownership and serializing");
+                LogDebug("taking ownership and serializing");
                 TakeOwnership();
                 RequestSerialization();
             }
@@ -219,7 +235,7 @@ namespace moe.nikky.kinetic_controls.control.interact
             if (!IsAuthorized) return;
 
             TakeOwnership();
-            Log($"interact {index}");
+            Log($"interact from {index}");
             if (clickOnActiveDisables && SyncedIndex == index)
             {
                 SyncedIndex = disabledIndex;
@@ -296,7 +312,10 @@ namespace moe.nikky.kinetic_controls.control.interact
                 var callback = interactCallbacks[i];
                 callback.selector = this;
                 callback.index = i;
-                callback.MarkDirty();
+                if (!Application.isPlaying)
+                {
+                    callback.MarkDirty();
+                }
             }
         }
 
@@ -378,7 +397,11 @@ namespace moe.nikky.kinetic_controls.control.interact
                 // interactCallback.EditorACL = AccessControl;
                 interactCallback.EditorDebugLog = DebugLog;
                 // interactCallback.EditorEnforceACL = EnforceACL;
-                interactCallback.MarkDirty();
+
+                if (!Application.isPlaying)
+                {
+                    interactCallback.MarkDirty();
+                }
             }
         }
 #endif

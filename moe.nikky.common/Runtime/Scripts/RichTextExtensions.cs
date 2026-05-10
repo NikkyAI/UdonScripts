@@ -4,33 +4,48 @@ namespace moe.nikky.common
 {
     public static class RichTextExtensions
     {
-        public static string ToHex(this Color color) =>
-            string.Format(
+        public static string ToHex(this Color color)
+        {
+            return string.Format(
                 "{0:X2}{1:X2}{2:X2}{3:X2}",
                 (byte)Mathf.Clamp01(color.r) * 255,
                 (byte)Mathf.Clamp01(color.g) * 255,
                 (byte)Mathf.Clamp01(color.b) * 255,
                 (byte)Mathf.Clamp01(color.a) * 255
             );
+        }
 
-        public static string Color(this string message, Color color) =>
-            string.Format(
+        public static string Color(this string message, Color color)
+        {
+            return string.Format(
                 "<color=#{0:X2}{1:X2}{2:X2}{3:X2}>",
                 (byte)Mathf.Clamp01(color.r) * 255,
                 (byte)Mathf.Clamp01(color.g) * 255,
                 (byte)Mathf.Clamp01(color.b) * 255,
                 (byte)Mathf.Clamp01(color.a) * 255
             ) + message + "</color>";
+        }
 
-        public static string Color(this string message, RichTextColor color) =>
-            $"<color={color}>" + message + "</color>";
+        public static string Color(this string message, RichTextColor color)
+        {
+            return $"<color={color}>" + message + "</color>";
+        }
+
+        public static string Colored(this string message, RichTextColor color)
+        {
+            return $"<color={color}>" + message + "</color>";
+        }
 
 
-        public static string Bold(this string message) =>
-            "<b>" + message + "</b>";
+        public static string Bold(this string message)
+        {
+            return "<b>" + message + "</b>";
+        }
 
-        public static string Italics(this string message) =>
-            "<i>" + message + "</i>";
+        public static string Italics(this string message)
+        {
+            return "<i>" + message + "</i>";
+        }
     }
 
     public enum RichTextColor
@@ -56,6 +71,6 @@ namespace moe.nikky.common
         silver, // 	#c0c0c0ff
         teal, // 	#008080ff
         white, // 	#ffffffff
-        yellow, //   #ffff00ff
+        yellow //   #ffff00ff
     }
 }

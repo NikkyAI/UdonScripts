@@ -21,7 +21,7 @@ namespace moe.nikky.kinetic_controls.driver.converter
         {
             if (!enabled) return;
             int intValue = value ? intOn : intOff;
-            Log($"updating int: {value} -> {intValue} on {_intDrivers.Length} drivers");
+            LogDebug($"updating int: {value} -> {intValue} on {_intDrivers.Length} drivers");
             for (var i = 0; i < _intDrivers.Length; i++)
             {
                 _intDrivers[i].UpdateIntRemap(intValue);

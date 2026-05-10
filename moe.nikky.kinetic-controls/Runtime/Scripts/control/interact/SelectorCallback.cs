@@ -11,7 +11,7 @@ namespace moe.nikky.kinetic_controls.control.interact
     [RequireComponent(typeof(PreProcessEditorHelper))]
 #endif
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    public class SelectorCallback : LoggingSimple
+    public class SelectorCallback : CommonLogger
     {
         [Header("Selector Callback")] //header
         [FormerlySerializedAs("boolToggleDriver")]  //
@@ -22,7 +22,7 @@ namespace moe.nikky.kinetic_controls.control.interact
         [SerializeField] [ReadOnly] public Selector selector;
         [SerializeField] [ReadOnly] public int index = -1;
 
-        [SerializeField, ReadOnly] internal BoolDriver[] boolDrivers = { };
+        [SerializeField] [ReadOnly] [NonReorderable] internal BoolDriver[] boolDrivers = { };
 
         protected override string LogPrefix => nameof(SelectorCallback);
 
@@ -51,7 +51,7 @@ namespace moe.nikky.kinetic_controls.control.interact
             // if (_isInteracting) return;
             if (!IsAuthorized) return;
             // _isInteracting = true;
-            Log($"interact on {index}");
+            LogDebug($"interact on {index}");
             selector._OnInteract(index);
             // _UpdateHandlers(EVENT_INTERACT, index);
         }

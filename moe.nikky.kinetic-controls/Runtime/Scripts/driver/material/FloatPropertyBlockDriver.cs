@@ -55,7 +55,7 @@ namespace moe.nikky.kinetic_controls.driver.material
             if (_propertyBlock == null) _propertyBlock = new MaterialPropertyBlock();
             if (_propertyId == 0) _propertyId = VRCShader.PropertyToID(propertyName);
             // if (_lastValue == value) return;
-            Log($"UpdateFloat {propertyName} to {value} on {materialSource}");
+            LogDebug($"UpdateFloat {propertyName} to {value} on {materialSource}");
             // _lastValue = value
 
             materialSource.GetPropertyBlock(_propertyBlock, materialIndex);

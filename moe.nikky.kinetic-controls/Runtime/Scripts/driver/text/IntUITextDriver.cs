@@ -48,7 +48,7 @@ namespace moe.nikky.kinetic_controls.driver.text
 
         protected override void OnValidate()
         {
-            if(!Application.isPlaying) return;
+            if(Application.isPlaying) return;
             base.OnValidate();
 
             if (_cachedValue == int.MinValue) return;
@@ -73,7 +73,10 @@ namespace moe.nikky.kinetic_controls.driver.text
             OnUpdateInt(value);
             if (textMeshPro)
             {
-                textMeshPro.MarkDirty();
+                if (!Application.isPlaying)
+                {
+                    textMeshPro.MarkDirty();
+                }
             }
             _cachedValue = value;
         }

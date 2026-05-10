@@ -67,7 +67,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
                 {
                     if (!_leftGrabbed)
                     {
-                        Log("Left Grabbed");
+                        LogDebug("Left Grabbed");
                     }
 
                     _leftGrabbed = true;
@@ -77,7 +77,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
                 {
                     if (!_rightGrabbed)
                     {
-                        Log("Right Grabbed");
+                        LogDebug("Right Grabbed");
                     }
 
                     _rightGrabbed = true;
@@ -89,7 +89,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
                 {
                     if (_leftGrabbed)
                     {
-                        Log($"Left Released");
+                        LogDebug($"Left Released");
                     }
 
                     _leftGrabbed = false;
@@ -99,7 +99,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
                 {
                     if (_rightGrabbed)
                     {
-                        Log($"Right Released");
+                        LogDebug($"Right Released");
                     }
 
                     _rightGrabbed = false;
@@ -125,11 +125,11 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             if (!contactInfo.contactSender.player.isLocal) return;
             if (!IsAuthorized) return;
 
-            Log($"Contact Enter {contactInfo.contactPoint} {contactInfo.matchingTags.Length}");
+            LogDebug($"Contact Enter {contactInfo.contactPoint} {contactInfo.matchingTags.Length}");
             for (var i = 0; i < contactInfo.matchingTags.Length; i++)
             {
                 var matchingTag = contactInfo.matchingTags[i];
-                Log(matchingTag);
+                LogDebug(matchingTag);
             }
 
             if (contactInfo.matchingTags.Contains("FingerIndexL"))
@@ -157,7 +157,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
 
             if (contactInfo.matchingTags.Contains("FingerIndexL"))
             {
-                Log("Contact Exit Left");
+                LogDebug("Contact Exit Left");
                 _leftSender = null;
                 OnLeftContactExit();
             }
@@ -165,7 +165,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
 
             if (contactInfo.matchingTags.Contains("FingerIndexR"))
             {
-                Log("Contact Exit Right");
+                LogDebug("Contact Exit Right");
                 _rightSender = null;
                 OnRightContactExit();
             }
@@ -179,7 +179,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
                 return _leftSender.position;
             }
 
-            LogWarning("getting left finger bone position");
+            LogDebug("getting left finger bone position");
             Vector3 leftHandPos = LocalPlayer.GetBonePosition(HumanBodyBones.LeftIndexDistal);
             if (leftHandPos == Vector3.zero)
             {
@@ -196,7 +196,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
                 return _rightSender.position;
             }
 
-            LogWarning("getting right finger bone position");
+            LogDebug("getting right finger bone position");
             Vector3 rightHandPos = LocalPlayer.GetBonePosition(HumanBodyBones.RightIndexDistal);
             if (rightHandPos == Vector3.zero)
             {
@@ -229,7 +229,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             if (_isTrackingLeft && !followLeft)
             {
                 // Log($"VR Drop with target at {SyncedValueNormalized}");
-                Log($"VR stop tracking left");
+                LogDebug($"VR stop tracking left");
                 _isTrackingLeft = false;
 
                 LocalPlayer.PlayHapticEventInHand(VRC_Pickup.PickupHand.Left, 1f, 1f, 0.2f);
@@ -239,7 +239,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             if (_isTrackingRight && !followRight)
             {
                 // Log($"VR Drop with target at {SyncedValueNormalized}");
-                Log($"VR stop tracking right");
+                LogDebug($"VR stop tracking right");
                 _isTrackingRight = false;
 
                 LocalPlayer.PlayHapticEventInHand(VRC_Pickup.PickupHand.Right, 1f, 1f, 0.2f);
@@ -289,18 +289,18 @@ namespace moe.nikky.kinetic_controls.control.kinetic
         {
             if (!IsAuthorized) return;
             // _leftSender = leftSender;
-            Log($"OnLeftContactEnter received {leftSender.usage}");
-            Log($"Left Contact Enter");
+            LogDebug($"OnLeftContactEnter received {leftSender.usage}");
+            LogDebug($"Left Contact Enter");
 
             if (!IsInVR)
             {
-                Log("not in vr");
+                LogDebug("not in vr");
                 return;
             }
 
             if (!_inLeftTrigger)
             {
-                Log($"VR contact left");
+                LogDebug($"VR contact left");
                 if (!_isRunningContactLoop)
                 {
                     Log("starting FollowCollider");
@@ -327,18 +327,18 @@ namespace moe.nikky.kinetic_controls.control.kinetic
         {
             if (!IsAuthorized) return;
             // _rightSender = rightSender;
-            Log($"OnRightContactEnter received {rightSender.usage}");
-            Log($"Right Contact Enter");
+            LogDebug($"OnRightContactEnter received {rightSender.usage}");
+            LogDebug($"Right Contact Enter");
 
             if (!IsInVR)
             {
-                Log("not in vr");
+                LogDebug("not in vr");
                 return;
             }
 
             if (!_inRightTrigger)
             {
-                Log($"VR contact right");
+                LogDebug($"VR contact right");
                 if (!_isRunningContactLoop)
                 {
                     Log("starting FollowCollider");
@@ -364,7 +364,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
         private void OnLeftContactExit()
         {
             if (!IsAuthorized) return;
-            Log($"Left Contact Exit");
+            LogDebug($"Left Contact Exit");
             _inLeftTrigger = false;
             _leftSender = null;
             ResetTransform();
@@ -378,7 +378,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
         private void OnRightContactExit()
         {
             if (!IsAuthorized) return;
-            Log($"Right Contact Exit");
+            LogDebug($"Right Contact Exit");
             _inRightTrigger = false;
             _rightSender = null;
             ResetTransform();
@@ -388,8 +388,6 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             // }
             // _localPlayer.PlayHapticEventInHand(VRC_Pickup.PickupHand.Right, 1f, 1f, 0.2f);
         }
-        
-        
         
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
         internal override void Setup()

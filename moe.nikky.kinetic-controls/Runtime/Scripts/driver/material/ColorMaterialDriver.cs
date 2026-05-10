@@ -31,7 +31,7 @@ namespace moe.nikky.kinetic_controls.driver.material
             for (var i = 0; i < propertyNames.Length; i++)
             {
                 _propertyIds[i] = VRCShader.PropertyToID(propertyNames[i]);
-                Log($"property {propertyNames[i]} => {_propertyIds[i]}");
+                LogDebug($"property {propertyNames[i]} => {_propertyIds[i]}");
             }
         }
 
@@ -47,7 +47,7 @@ namespace moe.nikky.kinetic_controls.driver.material
 //                 return;
 //             }
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-            Log($"UpdateColor {value} on {materials.Length} materials {_propertyIds.Length} properties");
+            LogDebug($"UpdateColor {value} on {materials.Length} materials {_propertyIds.Length} properties");
 #endif
             for (var i = 0; i < materials.Length; i++)
             {
@@ -62,7 +62,10 @@ namespace moe.nikky.kinetic_controls.driver.material
                 }
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-                mat.MarkDirty();
+                if (!Application.isPlaying)
+                {
+                    mat.MarkDirty();
+                }
 #endif
             }
 
@@ -74,10 +77,13 @@ namespace moe.nikky.kinetic_controls.driver.material
         {
             base.ApplyColorValue(value);
             OnUpdateColor(value);
-            Log("marking materials as Dirty");
-            foreach (var material in materials)
+
+            if (!Application.isPlaying)
             {
-                material.MarkDirty();
+                foreach (var material in materials)
+                {
+                    material.MarkDirty();
+                }
             }
         }
 #endif

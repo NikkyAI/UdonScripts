@@ -1,6 +1,7 @@
 ﻿using moe.nikky.common.Editor;
 using Texel;
 using UdonSharp;
+using UnityEditor;
 using UnityEngine;
 using VRC.SDKBase;
 
@@ -12,15 +13,20 @@ namespace moe.nikky.common.utils
     [RequireComponent(typeof(PreProcessEditorHelper))]
 #endif
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    public class ACLBaseManager : ACLBaseSimple
+    public class ACLBaseManager : TexelAccessControl
     {
-
         [SerializeField] private GameObject aclComponents;
-        private ACLBase[] _aclBases = { };
-    
+        private TexelAccessControl[] _aclBases = { };
+
+        /*[NonSerialized]*/
+        private AccessControl prevAccessControl;
+
+        /*[NonSerialized]*/
+        private bool prevEnforceACL;
+
         protected override string LogPrefix => nameof(ACLBaseManager);
-    
-        void Start()
+
+        private void Start()
         {
             _EnsureInit();
         }
@@ -43,10 +49,7 @@ namespace moe.nikky.common.utils
         protected override void AccessChanged()
         {
         }
-    
-        /*[NonSerialized]*/ private AccessControl prevAccessControl;
-        /*[NonSerialized]*/ private bool prevEnforceACL;
-    
+
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
         protected override void OnValidate()
         {
@@ -54,25 +57,22 @@ namespace moe.nikky.common.utils
             base.OnValidate();
             // UnityEditor.EditorUtility.SetDirty(this);
 
-            if(prevAccessControl != AccessControl
-               || prevEnforceACL != EnforceACL
-               // || prevDebugLog != DebugLog
-              )
+            if (prevAccessControl != AccessControl
+                || prevEnforceACL != EnforceACL
+                // || prevDebugLog != DebugLog
+               )
             {
                 ApplyACLs();
                 prevAccessControl = AccessControl;
                 // prevDebugLog = DebugLog;
-            
-                UnityEditor.EditorUtility.SetDirty(this);
+
+                EditorUtility.SetDirty(this);
             }
         }
 
         public override bool OnPreprocess()
         {
-            if (!base.OnPreprocess())
-            {
-                return false;
-            }
+            if (!base.OnPreprocess()) return false;
 
             ApplyACLs();
             return true;
@@ -83,7 +83,7 @@ namespace moe.nikky.common.utils
         {
             if (Utilities.IsValid(aclComponents))
             {
-                _aclBases = aclComponents.GetComponentsInChildren<ACLBase>();
+                _aclBases = aclComponents.GetComponentsInChildren<TexelAccessControl>();
                 foreach (var aclBase in _aclBases)
                 {
                     aclBase.EditorACL = AccessControl;

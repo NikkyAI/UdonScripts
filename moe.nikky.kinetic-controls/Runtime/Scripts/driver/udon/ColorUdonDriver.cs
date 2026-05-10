@@ -53,9 +53,13 @@ namespace moe.nikky.kinetic_controls.driver.udon
         {
             base.ApplyColorValue(value);
             OnUpdateColor(value);
-            foreach (var externalBehaviour in externalBehaviours)
+
+            if (!Application.isPlaying)
             {
-                externalBehaviour.MarkDirty();
+                foreach (var externalBehaviour in externalBehaviours)
+                {
+                    externalBehaviour.MarkDirty();
+                }
             }
         }
 #endif

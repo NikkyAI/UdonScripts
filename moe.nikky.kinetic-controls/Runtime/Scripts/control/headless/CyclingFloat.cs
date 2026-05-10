@@ -13,7 +13,7 @@ namespace moe.nikky.kinetic_controls.control.headless
     [RequireComponent(typeof(PreProcessEditorHelper))]
 #endif
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    public class CyclingFloat : LoggingSimple
+    public class CyclingFloat : CommonLogger
     {
         [Header("Cycling Float")] //
         [Range(0, 1)]
@@ -29,7 +29,7 @@ namespace moe.nikky.kinetic_controls.control.headless
         [SerializeField]
         private GameObject floatDriverSource;
 
-        [SerializeField] [ReadOnly] private FloatDriver[] _floatDrivers = { };
+        [SerializeField] [ReadOnly] [NonReorderable] private FloatDriver[] _floatDrivers = { };
 
         private float _smoothedCurrent = 0f;
 
@@ -139,8 +139,8 @@ namespace moe.nikky.kinetic_controls.control.headless
 
             if (debug)
             {
-                Log($"delta {delta:0.00}");
-                Log($"before {_smoothedCurrent:0.00} => {target:0.00f}");
+                LogDebug($"delta {delta:0.00}");
+                LogDebug($"before {_smoothedCurrent:0.00} => {target:0.00f}");
             }
 
             var maxSpeed = Mathf.Max(speed, minSpeed);
@@ -155,7 +155,7 @@ namespace moe.nikky.kinetic_controls.control.headless
             );
             if (debug)
             {
-                Log($"velocity:  {_velocity:0.00}");
+                LogDebug($"velocity:  {_velocity:0.00}");
             }
 
             var value = Mathf.Repeat(_smoothedCurrent, 1f);

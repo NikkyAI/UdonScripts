@@ -38,8 +38,12 @@ namespace moe.nikky.kinetic_controls.driver
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
         public override void ApplyBoolValue(bool value)
         {
-            OnUpdateBool(value);
-            this.MarkDirty();
+            base.ApplyBoolValue(value);
+            if (!Application.isPlaying)
+            {
+                OnUpdateBool(value);
+                this.MarkDirty();
+            }
         }
 #endif
     }

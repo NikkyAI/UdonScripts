@@ -26,7 +26,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
 
         private Vector3 _axisVector = Vector3.zero;
 
-        private Vector3 _forwardVector = Vector3.zero;
+        private Vector3 _tangentVector = Vector3.zero;
 
         // [SerializeField, InspectorName("output range")]
         // private Vector2 range = new Vector2(0, 1);
@@ -115,26 +115,26 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             // UpdateHandlePosition();
         }
 
-        private void SetupLeverValuesAndComponents()
+        internal void SetupLeverValuesAndComponents()
         {
-            Log("SetupValuesAndComponents");
+            LogDebug("SetupValuesAndComponents");
             _targetIndicatorValid = Utilities.IsValid(targetIndicator);
             _valueIndicatorValid = Utilities.IsValid(valueIndicator);
             _axisVector = Vector3.zero;
             _axisVector[(int)axis] = 1;
-            if (_forwardVector == Vector3.zero)
+            if (_tangentVector == Vector3.zero)
             {
                 if (axis == Axis.X)
                 {
-                    _forwardVector = Vector3.up;
+                    _tangentVector = Vector3.up;
                 }
                 else if (axis == Axis.Y)
                 {
-                    _forwardVector = Vector3.forward;
+                    _tangentVector = Vector3.forward;
                 }
                 else if (axis == Axis.Z)
                 {
-                    _forwardVector = Vector3.up;
+                    _tangentVector = Vector3.up;
                 }
                 else
                 {
@@ -142,59 +142,17 @@ namespace moe.nikky.kinetic_controls.control.kinetic
                 }
             }
 
-            if (minLimitIndicator)
-            {
-                minLimitIndicator.transform.localRotation = Quaternion.AngleAxis(minRot, _axisVector);
-
-#if UNITY_EDITOR && !COMPILER_UDONSHARP
-                minLimitIndicator.transform.MarkDirty();
-#endif
-            }
-            else
-            {
-                LogError("minLimit is not set");
-            }
-
-            if (maxLimitIndicator)
-            {
-                maxLimitIndicator.transform.localRotation = Quaternion.AngleAxis(maxRot, _axisVector);
-
-#if UNITY_EDITOR && !COMPILER_UDONSHARP
-                maxLimitIndicator.transform.MarkDirty();
-#endif
-            }
-            else
-            {
-                LogError("maxLimit is not set");
-            }
-
-            // if (Utilities.IsValid(LocalPlayer))
+            // if (desktopRaycastCollider)
             // {
-            //     IsInVR = LocalPlayer.IsUserInVR();
-            // }
-
-            if (desktopRaycastCollider)
-            {
-                if (IsInVR)
-                {
-                    desktopRaycastCollider.enabled = false;
-                }
-                else
-                {
-                    desktopRaycastCollider.enabled = true;
-                    desktopRaycastCollider.isTrigger = true;
-                }
-            }
-
-            // isCyclic = Mathf.Approximately(minRot, -180f) && Mathf.Approximately(maxRot, 180f);
-            // if (Utilities.IsValid(minLimitIndicator))
-            // {
-            //     minLimitIndicator.gameObject.SetActive(!isCyclic);
-            // }
-            //
-            // if (Utilities.IsValid(maxLimitIndicator))
-            // {
-            //     maxLimitIndicator.gameObject.SetActive(!isCyclic);
+            //     if (IsInVR)
+            //     {
+            //         desktopRaycastCollider.enabled = false;
+            //     }
+            //     else
+            //     {
+            //         desktopRaycastCollider.enabled = true;
+            //         desktopRaycastCollider.isTrigger = true;
+            //     }
             // }
         }
 
@@ -225,7 +183,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             var relativePos = transform.InverseTransformPoint(absolutePos);
             relativePos[(int)axis] = 0;
 
-            var angle = Vector3.SignedAngle(_forwardVector, relativePos, _axisVector);
+            var angle = Vector3.SignedAngle(_tangentVector, relativePos, _axisVector);
 
             // Log($"forwardVector: {_forwardVector}");
             // Log($"axisVector: {_axisVector}");
@@ -246,7 +204,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
 
         public override void FollowPickup()
         {
-            Log("getting normalized value from pickup position");
+            LogDebug("getting normalized value from pickup position");
             // var relativePos = transform.InverseTransformPoint(Pickup.transform.position);
             // SyncedValueNormalized = PosToNormalized(Pickup.transform.position);
             OnMoveHandle(handle.transform.position);
@@ -269,7 +227,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             if (desktopRaycastCollider.Raycast(ray, out var hit, 5))
             {
                 var hitPosition = ray.GetPoint(hit.distance);
-                Log($"raycast hit, distance: {hit.distance}, point: {hitPosition}");
+                LogDebug($"raycast hit, distance: {hit.distance}, point: {hitPosition}");
                 // var localHit = targetIndicator.parent.InverseTransformPoint(hitPosition);
 
                 if (Utilities.IsValid(debugDesktopRaytrace))
@@ -310,7 +268,10 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             //     handle.ResetTransform();
             // }
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-            targetIndicator.transform.MarkDirty();
+            if (!Application.isPlaying)
+            {
+                targetIndicator.transform.MarkDirty();
+            }
 #endif
         }
 
@@ -321,11 +282,26 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             valueIndicator.localRotation = Quaternion.AngleAxis(clampedRotEuler, _axisVector);
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-            valueIndicator.transform.MarkDirty();
+            if (!Application.isPlaying)
+            {
+                valueIndicator.transform.MarkDirty();
+            }
 #endif
         }
 
-// #if UNITY_EDITOR && !COMPILER_UDONSHARP
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+
+
+        internal override void UpdateIndicatorsInEditor()
+        {
+            base.UpdateIndicatorsInEditor();
+            UpdateValueIndicator(
+                Mathf.Lerp(minRot, maxRot, smoothedCurrentNormalized)
+            );
+            UpdateTargetIndicator(
+                Mathf.Lerp(minRot, maxRot, smoothingTargetNormalized)
+            );
+        }
 //             [ContextMenu("Setup Editor Helper Script")]
 //             private void SetupEditorHelper()
 //             {
@@ -342,6 +318,6 @@ namespace moe.nikky.kinetic_controls.control.kinetic
 //                     editorHelper.CopyFromLever();
 //                 }
 //             }
-// #endif
+#endif
     }
 }

@@ -56,6 +56,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1804218991238802435}
   debugLog: {fileID: 0}
+  logLevel: 1
   enableValueRemapping: 0
   remapValues: []
   selectionId: 0
@@ -182,6 +183,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4344727995114894573}
   debugLog: {fileID: 0}
+  logLevel: 1
   enforceACL: 1
   accessControl: {fileID: 0}
   boolAuthorizedDrivers: {fileID: 0}

@@ -13,12 +13,12 @@ namespace moe.nikky.kinetic_controls.control.headless
     [RequireComponent(typeof(PreProcessEditorHelper))]
 #endif
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    public class FloatProxy : LoggingSimple
+    public class FloatProxy : CommonLogger
     {
         [SerializeField]
         internal GameObject floatDriverSource;
 
-        [SerializeField, ReadOnly, NonReorderable]
+        [SerializeField][ReadOnly][NonReorderable]
         public FloatDriver[] floatDrivers = Array.Empty<FloatDriver>();
 
 

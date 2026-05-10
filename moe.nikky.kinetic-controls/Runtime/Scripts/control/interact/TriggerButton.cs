@@ -13,7 +13,7 @@ namespace moe.nikky.kinetic_controls.control.interact
     [RequireComponent(typeof(PreProcessEditorHelper))]
 #endif
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    public class TriggerButton : ACLBaseSimple
+    public class TriggerButton : TexelAccessControl
     {
         [Header("Trigger - MIDI - Requires VRC_MidiListener Component with NoteOn")] //
         [Tooltip("Requires a VRC MIDI Listened with NoteOn enabled")]
@@ -36,6 +36,7 @@ namespace moe.nikky.kinetic_controls.control.interact
         [FormerlySerializedAs("triggerDriversReadonly")]
         [SerializeField] 
         [ReadOnly]
+        [NonReorderable]
         private TriggerDriver[] _triggerDrivers = { };
 
         void Start()
@@ -63,7 +64,7 @@ namespace moe.nikky.kinetic_controls.control.interact
         public override void Interact()
         {
             if (!IsAuthorized) return;
-            Log("Trigger executing");
+            Log("Trigger Interact");
             for (var i = 0; i < _triggerDrivers.Length; i++)
             {
                 _triggerDrivers[i].OnTrigger();
@@ -77,10 +78,10 @@ namespace moe.nikky.kinetic_controls.control.interact
             base.MidiNoteOn(channel, number, velocity);
             if (!midiEnabled) return;
             
-            Log($"MidiNoteOn({channel}, {number}, {velocity})");
+            LogDebug($"MidiNoteOn({channel}, {number}, {velocity})");
             if (channel == midiChannel && number == midiNumber && velocity >= midiMinVelocity)
             {
-                Log("midi triggered");
+                LogDebug("midi triggered");
                 for (var i = 0; i < _triggerDrivers.Length; i++)
                 {
                     _triggerDrivers[i].OnTrigger();
@@ -129,10 +130,11 @@ namespace moe.nikky.kinetic_controls.control.interact
                     }
                 }
             }
-            
-            UnityEditor.EditorUtility.SetDirty(this);
 
-            this.MarkDirty();
+            if (!Application.isPlaying)
+            {
+                this.MarkDirty();
+            }
         }
 
         private void FindTriggerDrivers()

@@ -39,7 +39,10 @@ namespace moe.nikky.kinetic_controls.driver.control.kinetic
                     // commented to prevent breakage
                     // behaviour.SmoothingRate = value;
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-                    behaviour.MarkDirty();
+                    if (!Application.isPlaying)
+                    {
+                        behaviour.MarkDirty();
+                    }
 #endif
                 }
 

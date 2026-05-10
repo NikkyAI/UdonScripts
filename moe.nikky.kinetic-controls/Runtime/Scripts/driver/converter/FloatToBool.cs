@@ -43,15 +43,15 @@ namespace moe.nikky.kinetic_controls.driver.converter
             {
                 case ComparisonType.GreaterThan:
                     _state = value > compareTo;
-                    Log($"compare {value} > {compareTo} =  {_state}");
+                    LogDebug($"compare {value} > {compareTo} =  {_state}");
                     break;
                 case ComparisonType.LessThan:
                     _state = value < compareTo;
-                    Log($"compare {value} < {compareTo} =  {_state}");
+                    LogDebug($"compare {value} < {compareTo} =  {_state}");
                     break;
                 case ComparisonType.EqualTo:
                     _state = Mathf.Approximately(value, compareTo);
-                    Log($"compare {value} == {compareTo} =  {_state}");
+                    LogDebug($"compare {value} == {compareTo} =  {_state}");
                     break;
                 default:
                     LogError($"compareType {compareType} not implemented");

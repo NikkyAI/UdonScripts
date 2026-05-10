@@ -13,7 +13,7 @@ namespace moe.nikky.kinetic_controls.control.headless
     [RequireComponent(typeof(PreProcessEditorHelper))]
 #endif
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    public class LoopTrigger : LoggingSimple
+    public class LoopTrigger : CommonLogger
     {
         protected override string LogPrefix => nameof(LoopTrigger);
 
@@ -25,6 +25,7 @@ namespace moe.nikky.kinetic_controls.control.headless
 
         [SerializeField]
         [ReadOnly]
+        [NonReorderable]
         private TriggerDriver[] _triggerDrivers = { };
 
         private float _minDelay, _maxDelay;
@@ -56,7 +57,7 @@ namespace moe.nikky.kinetic_controls.control.headless
             // Log($"found {_triggerDrivers.Length} trigger drivers");
         }
 
-        private bool _toggleState = false;
+        private bool _timerShouldRun = false;
 
         private bool _timerRunning = false;
         public bool TimerRunning
@@ -64,11 +65,11 @@ namespace moe.nikky.kinetic_controls.control.headless
             get => _timerRunning;
             set
             {
-                Log($"timer set {_toggleState} -> {value}");
+                Log($"running set {_timerShouldRun} -> {value}");
 
-                if (!_toggleState && value)
+                if (!_timerShouldRun && value)
                 {
-                    _toggleState = true;
+                    _timerShouldRun = true;
 
                     // start timer
                     if (!_timerRunning)
@@ -81,22 +82,22 @@ namespace moe.nikky.kinetic_controls.control.headless
                     }
                 }
 
-                if (!value && _toggleState)
+                if (!value && _timerShouldRun)
                 {
-                    _toggleState = false;
+                    _timerShouldRun = false;
                 }
             }
         }
 
         public void TriggerTimer()
         {
-            Log("timer triggered");
+            LogDebug("timer triggered");
             _timerRunning = false;
 
             if (!onlyInstanceMaster || Networking.IsMaster)
             {
-                Log($"running triggers {_toggleState}");
-                if (_toggleState)
+                LogDebug($"running triggers {_timerShouldRun}");
+                if (_timerShouldRun)
                 {
                     foreach (var triggerDriver in _triggerDrivers)
                     {
@@ -105,7 +106,7 @@ namespace moe.nikky.kinetic_controls.control.headless
                 }
             }
 
-            if (!_timerRunning && _toggleState)
+            if (!_timerRunning && _timerShouldRun)
             {
                 // call timer on a delay
                 _timerRunning = true;

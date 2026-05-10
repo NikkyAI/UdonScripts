@@ -19,7 +19,7 @@ namespace moe.nikky.kinetic_controls.driver.gameobject
         public override void OnUpdateBool(bool value)
         {
             if (!enabled) return;
-            Log($"switching state to {value}");
+            LogDebug($"switching state to {value}");
             if (Utilities.IsValid(targetsOn))
             {
                 for (var i = 0; i < targetsOn.Length; i++)
@@ -51,20 +51,24 @@ namespace moe.nikky.kinetic_controls.driver.gameobject
             base.ApplyBoolValue(value);
             if (!enabled) return;
             OnUpdateBool(value);
-            this.MarkDirty();
-            foreach (var obj in targetsOn)
-            {
-                if (Utilities.IsValid(obj))
-                {
-                    obj.MarkDirty();
-                }
-            }
 
-            foreach (var obj in targetsOff)
+            if (!Application.isPlaying)
             {
-                if (Utilities.IsValid(obj))
+                this.MarkDirty();
+                foreach (var obj in targetsOn)
                 {
-                    obj.MarkDirty();
+                    if (Utilities.IsValid(obj))
+                    {
+                        obj.MarkDirty();
+                    }
+                }
+
+                foreach (var obj in targetsOff)
+                {
+                    if (Utilities.IsValid(obj))
+                    {
+                        obj.MarkDirty();
+                    }
                 }
             }
         }
