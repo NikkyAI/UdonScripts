@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1640317436577943552}
   - component: {fileID: 2408013950069930468}
   m_Layer: 13
-  m_Name: Capsule
+  m_Name: Capsule Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -152,6 +152,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 6751810163622717833}
+  debugLog: {fileID: 0}
+  logLevel: 1
+  authStateInEditor: 1
   enforceACL: 1
   accessControl: {fileID: 0}
   boolAuthorizedDrivers: {fileID: 0}

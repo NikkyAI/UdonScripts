@@ -58,6 +58,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1848212662234351071}
   debugLog: {fileID: 0}
+  logLevel: 1
   selectionId: 0
   colorDisabled: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   colorEnabled: {r: 0, g: 0.25, b: 1, a: 1}
@@ -110,6 +111,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 379776148486075503}
   debugLog: {fileID: 0}
+  logLevel: 1
   materialSource: {fileID: 6150766400804525124}
   materialIndex: 0
   propertyName: _NeonColor
@@ -185,7 +187,6 @@ GameObject:
   - component: {fileID: 2968163458061880519}
   - component: {fileID: 3006282280726027288}
   - component: {fileID: 6150766400804525124}
-  - component: {fileID: 1097034938889158614}
   m_Layer: 0
   m_Name: Trigger
   m_TagString: Untagged
@@ -254,6 +255,8 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 2968163458061880519}
   debugLog: {fileID: 0}
+  logLevel: 1
+  authStateInEditor: 1
   enforceACL: 1
   accessControl: {fileID: 0}
   boolAuthorizedDrivers: {fileID: 1206672229167828943}
@@ -264,8 +267,8 @@ MonoBehaviour:
   midiChannel: 0
   midiNumber: 0
   midiMinVelocity: 127
-  triggerDrivers: {fileID: 8540150601758144541}
-  triggerDriversReadonly: []
+  triggerDriverSource: {fileID: 8540150601758144541}
+  _triggerDrivers: []
 --- !u!114 &2968163458061880519
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -341,19 +344,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &1097034938889158614
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4746690968305577363}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2334f81953c448fd9e92c638afb5e4a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  enabled: 1
 --- !u!1 &6176656632822096678
 GameObject:
   m_ObjectHideFlags: 0
@@ -412,6 +402,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 4801131670229981704}
   debugLog: {fileID: 0}
+  logLevel: 1
   selectionId: 0
   valueOff: 0.1
   valueOn: 1.78
@@ -464,6 +455,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 1541737667130932547}
   debugLog: {fileID: 0}
+  logLevel: 1
   enableValueRemapping: 0
   remapFrom: {x: 0, y: 1}
   remapTo: {x: 0, y: 1}

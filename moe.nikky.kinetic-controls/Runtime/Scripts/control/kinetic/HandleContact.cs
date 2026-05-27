@@ -41,6 +41,11 @@ namespace moe.nikky.kinetic_controls.control.kinetic
         {
             base.AccessChanged();
 
+            // if (!IsInVR)
+            // {
+            //     receiver.enabled = false;
+            // }
+        
             // not exposed to udon
             // receiver.contentTypes = IsAuthorized ? DynamicsUsageFlags.Avatar : DynamicsUsageFlags.Nothing;
         }

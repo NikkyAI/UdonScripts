@@ -1,6 +1,5 @@
 ﻿using JetBrains.Annotations;
 using moe.nikky.common;
-using moe.nikky.common.Editor;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -8,9 +7,7 @@ using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.driver.converter
 {
-#if UNITY_EDITOR && !COMPILER_UDONSHARP
-    [RequireComponent(typeof(PreProcessEditorHelper))]
-#endif
+
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class ModernUISelectorToBool : CommonLogger
     {

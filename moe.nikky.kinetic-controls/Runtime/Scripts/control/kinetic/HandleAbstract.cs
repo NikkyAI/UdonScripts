@@ -37,13 +37,23 @@ namespace moe.nikky.kinetic_controls.control.kinetic
 
         protected override void AccessChanged()
         {
+            
+            // var player = Networking.LocalPlayer;
+            // var isInVR = player != null && !player.IsUserInVR();
+            
             if (IsInVR || IsHeldLocally)
             {
-                 DisableInteractive = true;
+                DisableInteractive = true;
+            }
+            else if(IsAuthorized)
+            {
+                DisableInteractive = false;
+                InteractionText = "Click and drag to adjust";
             }
             else
             {
-                DisableInteractive = !IsAuthorized;
+                DisableInteractive = true;
+                InteractionText = "";
             }
         }
 

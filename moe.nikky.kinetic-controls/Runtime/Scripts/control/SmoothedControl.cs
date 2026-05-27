@@ -4,6 +4,7 @@ using System;
 using moe.nikky.common;
 using UdonSharp;
 using UnityEngine;
+using VRC.SDK3.Components;
 using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.control
@@ -145,7 +146,18 @@ namespace moe.nikky.kinetic_controls.control
         [ReadOnly]
 #endif
         [Range(0f, 1f)]
+        [FieldChangeCallback(nameof(SmoothingMaxSpeed))]
         public float smoothingMaxSpeed = 0.25f;
+
+        public float SmoothingMaxSpeed
+        {
+            get => smoothingMaxSpeed;
+            set
+            {
+                smoothingMaxSpeed = value;
+                // _handle = _handle.SetDuration(smoothingMaxSpeed);
+            }
+        }
 
         protected float smoothingTargetNormalized;
         protected float smoothedCurrentNormalized;
@@ -166,6 +178,8 @@ namespace moe.nikky.kinetic_controls.control
         // IMPORTANT, DO NOT DELETE
         [UdonSynced] protected bool SyncedIsBeingManipulated;
 
+        // protected VRCTweenHandle _handle;
+
         protected abstract void UpdateTargetIndicator(float clampedPosOrRotEuler);
 
         protected abstract void UpdateValueIndicator(float clampedPosOrRotEuler);
@@ -182,6 +196,19 @@ namespace moe.nikky.kinetic_controls.control
         {
             base._Init();
             // FindDrivers();
+
+            // _handle = VRCTween.TweenFloat(
+            //     0f,
+            //     0f,
+            //     .1f,
+            //     this,
+            //     nameof(smoothedCurrentNormalized),
+            //     nameof(OnTweenUpdate),
+            //     VRCTweenEase.Linear
+            // )
+            // .OnComplete(this, nameof(OnFloatComplete))
+            // .SetSpeedBased()
+            // .Pause();
 
             defaultValueNormalized = Mathf.Clamp01(defaultValueNormalized);
             smoothedCurrentNormalized = defaultValueNormalized;
@@ -232,15 +259,41 @@ namespace moe.nikky.kinetic_controls.control
             if (!_isSmoothing)
             {
                 _isSmoothing = true;
+                
                 this.SendCustomEventDelayedFrames(
                     nameof(_OnValueSmoothedUpdate),
                     0
                 );
+                
+                // _handle = _handle
+                //     .SetDuration(1f)
+                //     .ChangeEndValue(normalizedTargetValue, true);
+                // _handle.Restart();
             }
         }
 
         private float _velocity;
 
+        // public void OnTweenUpdate()
+        // {
+        //     
+        //     var floatValue = Mathf.Lerp(MinValue, MaxValue, smoothedCurrentNormalized);
+        //     for (var i = 0; i < smoothedValueFloatDrivers.Length; i++)
+        //     {
+        //         smoothedValueFloatDrivers[i].UpdateFloatRescale(floatValue);
+        //     }
+        //
+        //     UpdateValueIndicator(
+        //         Mathf.Lerp(MinPosOrRot, MaxPosOrRot, smoothedCurrentNormalized)
+        //     );
+        //     
+        // }
+        //
+        // public void OnFloatComplete()
+        // {
+        //     _isSmoothing = false;
+        // }
+        
         public void _OnValueSmoothedUpdate()
         {
             // Log($"UpdateLoop {smoothedCurrentNormalized} => {smoothingTargetNormalized}");
@@ -408,55 +461,6 @@ namespace moe.nikky.kinetic_controls.control
 
             return output;
         }
-
-        // // Gradually changes an angle given in degrees towards a desired goal angle over time.
-        // public static float SmoothDamp01(
-        //     float current,
-        //     float target,
-        //     ref float currentVelocity,
-        //     float smoothTime,
-        //     [DefaultValue("Mathf.Infinity")] float maxSpeed,
-        //     [DefaultValue("Time.deltaTime")] float deltaTime
-        // )
-        // {
-        //     target = current + Delta01(current, target);
-        //     return SmoothDamp(current, target, ref currentVelocity, smoothTime, maxSpeed, deltaTime);
-        // }
-        //
-        // public static float Delta01(float current, float target)
-        // {
-        //     float delta = Mathf.Repeat(target - current, 1f);
-        //     if (delta > 0.5f)
-        //         delta -= 1f;
-        //     return delta;
-        // }
-        //
-        // // Gradually changes an angle given in degrees towards a desired goal angle over time.
-        // public static float SmoothDampAngle(
-        //     float current,
-        //     float target,
-        //     ref float currentVelocity,
-        //     float smoothTime,
-        //     [DefaultValue("Mathf.Infinity")] float maxSpeed,
-        //     [DefaultValue("Time.deltaTime")] float deltaTime
-        // )
-        // {
-        //     target = current + DeltaAngle(current, target);
-        //     return SmoothDamp(current, target, ref currentVelocity, smoothTime, maxSpeed, deltaTime);
-        // }
-        //
-        // // Calculates the shortest difference between two given angles.
-        // public static float DeltaAngle(float current, float target)
-        // {
-        //     float delta = Mathf.Repeat((target - current), 360.0F);
-        //     if (delta > 180.0F)
-        //         delta -= 360.0F;
-        //     return delta;
-        // }
-
-        // private float prevDefaultNormalized, prevDefault, prevMin, prevMax;
-        // private int lastHashSmoothedBase = 0;
-        // ReSharper restore InconsistentNaming
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
         internal void FindDrivers()

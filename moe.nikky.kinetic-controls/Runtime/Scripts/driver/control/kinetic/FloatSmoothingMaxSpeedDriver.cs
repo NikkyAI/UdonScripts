@@ -1,6 +1,5 @@
 ﻿using System;
 using moe.nikky.common;
-using moe.nikky.common.Editor;
 using moe.nikky.kinetic_controls.control;
 using UnityEngine;
 using VRC;
@@ -8,9 +7,7 @@ using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.driver.control.kinetic
 {
-#if UNITY_EDITOR && !COMPILER_UDONSHARP
-    [RequireComponent(typeof(PreProcessEditorHelper))]
-#endif
+
     public class FloatSmoothingMaxSpeedDriver : FloatDriver
     {
         [Header("External Behaviours")] // header
@@ -39,7 +36,7 @@ namespace moe.nikky.kinetic_controls.driver.control.kinetic
             {
                 if (Utilities.IsValid(behaviour))
                 {
-                    behaviour.smoothingMaxSpeed = value;
+                    behaviour.SmoothingMaxSpeed = value;
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
                     if (!Application.isPlaying)
                     {

@@ -79,6 +79,15 @@ namespace moe.nikky.common
         {
             return true;
         }
+        
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+        [ContextMenu("Preprocess")]
+        public void TriggerManually()
+        {
+            Debug.Log($"Manual Preprocess on {name.Color(RichTextColor.lightblue)}", this);
+            OnPreprocess();
+        }
+#endif
 
         #region local player and ownership
         protected VRCPlayerApi LocalPlayer { get; private set; }
@@ -99,7 +108,14 @@ namespace moe.nikky.common
             }
             else
             {
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+                if (Application.isPlaying)
+                {
+                    Debug.LogError("failed to init local player", this);
+                }
+#else
                 Debug.LogError("failed to init local player", this);
+#endif
             }
         }
 
@@ -113,7 +129,7 @@ namespace moe.nikky.common
         public virtual void TakeOwnership()
         {
             // this is just to avoid the log spam for trying to take ownership of something you already own
-            if (_owner != LocalPlayer) // !Networking.IsOwner(gameObject)
+            if (!Networking.IsOwner(gameObject))
                 Networking.SetOwner(Networking.LocalPlayer, gameObject);
         }
 

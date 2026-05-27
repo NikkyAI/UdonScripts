@@ -167,6 +167,10 @@ namespace moe.nikky.kinetic_controls.Editor
         [Header("Access Control")] //
         //[HelpBox("You either need to assign AccessControl here or disable enforceACL, otherwise the Lever WILL NOT work")]
         [SerializeField]
+        [Tooltip("this is for preview purposes in the editor only")]
+        public bool authStateInEditor = true;
+        
+        [SerializeField]
         public bool enforceACL = true;
 
         [Tooltip("ACL used to check who can use the toggle")] //
@@ -224,12 +228,12 @@ namespace moe.nikky.kinetic_controls.Editor
                 return;
             }
 
-            Debug.Log("Applying values", this);
+            // Debug.Log("Applying values", this);
 
             var l = GetLever();
             if (!Utilities.IsValid(l))
             {
-                Debug.LogError("fader was not assigned");
+                Debug.LogError("lever was not valid", this);
                 return;
             }
 
@@ -334,6 +338,7 @@ namespace moe.nikky.kinetic_controls.Editor
                 }
 
                 // handle.UseContactsInVR = useContactsInVR;
+                handleReference.AuthStateInEditor = authStateInEditor;
                 handleReference.EditorACL = accessControl;
                 handleReference.EditorEnforceACL = enforceACL;
                 handleReference.EditorDebugLog = debugLog;
@@ -359,6 +364,7 @@ namespace moe.nikky.kinetic_controls.Editor
             l.floatSmoothedValueDrivers = floatSmoothedDriverSource;
             l.EditorBoolAuthorizedDrivers = boolAuthorizedDriverSource;
 
+            l.AuthStateInEditor = authStateInEditor;
             l.EditorEnforceACL = enforceACL;
             l.EditorACL = accessControl;
 
@@ -504,6 +510,7 @@ namespace moe.nikky.kinetic_controls.Editor
                             floatTargetDriverSource,
                             floatSmoothedDriverSource,
                             boolAuthorizedDriverSource,
+                            authStateInEditor,
                             enforceACL,
                             accessControl,
                             debugLog
@@ -558,6 +565,7 @@ namespace moe.nikky.kinetic_controls.Editor
             floatSmoothedDriverSource = l.floatSmoothedValueDrivers;
             boolAuthorizedDriverSource = l.EditorBoolAuthorizedDrivers;
 
+            authStateInEditor = l.AuthStateInEditor;
             enforceACL = l.EditorEnforceACL;
             accessControl = l.EditorACL;
 
@@ -595,10 +603,20 @@ namespace moe.nikky.kinetic_controls.Editor
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
             ApplyValues(onPreProcess: true);
 #else
-            Debug.LogWarning("Preprocess: is not running");
+            Debug.LogWarning("Preprocess: is not in editor");
 #endif
             return true;
         }
+       
+#if UNITY_EDITOR && !COMPILER_UDONSHARP 
+        [ContextMenu("Find drivers")]
+        public void FindDrivers()
+        {
+            var l = GetLever();
+            l.FindDrivers();
+            l.FindBoolAuthDrivers();
+        }
+#endif
 
         public int PreprocessOrder { get; }
     }

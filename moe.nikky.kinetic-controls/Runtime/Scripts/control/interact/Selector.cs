@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using moe.nikky.common;
-using moe.nikky.common.Editor;
 using Texel;
 using UdonSharp;
 using UnityEngine;
@@ -10,9 +9,7 @@ using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.control.interact
 {
-#if UNITY_EDITOR && !COMPILER_UDONSHARP
-    [RequireComponent(typeof(PreProcessEditorHelper))]
-#endif
+
     [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
     public class Selector : TexelAccessControl
     {

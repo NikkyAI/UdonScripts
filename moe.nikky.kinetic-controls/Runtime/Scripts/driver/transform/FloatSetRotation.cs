@@ -2,6 +2,7 @@
 using moe.nikky.kinetic_controls.control.kinetic;
 using UdonSharp;
 using UnityEngine;
+using VRC;
 using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.driver
@@ -36,7 +37,8 @@ namespace moe.nikky.kinetic_controls.driver
             if (Utilities.IsValid(target))
             {
                 var rotationVector = target.localRotation.eulerAngles;
-                rotationVector[(int)axis] = value;
+                var clamped = Mathf.Repeat(value+180f, 360f) - 180f;
+                rotationVector[(int)axis] = clamped;
                 target.localRotation = Quaternion.Euler(rotationVector);
             }
             else
@@ -44,5 +46,18 @@ namespace moe.nikky.kinetic_controls.driver
                 LogWarning("reference target is invalid");
             }
         }
+        
+        
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+        protected override bool UpdateInEditor => true;
+        
+        protected override void PostEditorUpdate(float value)
+        {
+            if (!Application.isPlaying)
+            {
+                target.MarkDirty();
+            }
+        }
+#endif
     }
 }

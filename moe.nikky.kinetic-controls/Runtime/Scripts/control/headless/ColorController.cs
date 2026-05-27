@@ -1,6 +1,5 @@
 ﻿using JetBrains.Annotations;
 using moe.nikky.common;
-using moe.nikky.common.Editor;
 using UdonSharp;
 using UnityEngine;
 using UnityEngine.Serialization;
@@ -8,9 +7,7 @@ using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.control.headless
 {
-#if UNITY_EDITOR && !COMPILER_UDONSHARP
-    [RequireComponent(typeof(PreProcessEditorHelper))]
-#endif
+
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class ColorController : CommonLogger
     {
@@ -118,7 +115,7 @@ namespace moe.nikky.kinetic_controls.control.headless
             Color value = Color.HSVToRGB(hue, saturation, brightness);
             foreach (var colorDriver in _colorDrivers)
             {
-                Log($"Applying color {value} to driver {colorDriver}");
+                LogDebug($"Applying color {value} to driver {colorDriver}");
                 colorDriver.ApplyColorValue(value);
             }
         }

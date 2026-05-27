@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5245003237332095669}
   - component: {fileID: 5726380176061758228}
-  - component: {fileID: 3838200662134606477}
   - component: {fileID: 8449925299379823053}
   - component: {fileID: 6226452188972287653}
   - component: {fileID: 209400070687717721}
@@ -45,37 +44,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 179969457077047469}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &3838200662134606477
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 179969457077047469}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a300161128295c4a99198c1728a3b56, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
-  _udonSharpBackingUdonBehaviour: {fileID: 6226452188972287653}
-  enforceACL: 1
-  accessControl: {fileID: 0}
-  boolAuthorizedDrivers: {fileID: 0}
-  authorizedDrivers: []
-  controlBehaviours: []
-  resetTransform: {fileID: 0}
-  useContactsInVR: 1
-  pickup: {fileID: 0}
-  rigidBody: {fileID: 0}
 --- !u!65 &8449925299379823053
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -1,20 +1,18 @@
 {
-  "name": "moe.nikky.kinetic-controls",
-  "rootNamespace": "moe.nikky.kinetic_controls",
+  "name": "moe.nikky.common.editor",
+  "rootNamespace": "moe.nikky.common",
   "references": [
     "VRC.SDK3",
     "VRC.SDKBase",
     "VRC.Udon",
     "VRC.Udon.Editor",
     "UdonSharp.Runtime",
-    "com.texelsaur.common",
-    "Unity.TextMeshPro",
-    "Unity.Postprocessing.Runtime",
-    "moe.nikky.common",
     "UdonSharp.Editor",
-    "VRC.Udon.Serialization.OdinSerializer"
+    "moe.nikky.common"
   ],
-  "includePlatforms": [],
+  "includePlatforms": [
+    "Editor"
+  ],
   "excludePlatforms": [],
   "allowUnsafeCode": false,
   "overrideReferences": false,

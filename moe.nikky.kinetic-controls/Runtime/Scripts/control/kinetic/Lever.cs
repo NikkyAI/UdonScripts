@@ -261,7 +261,7 @@ namespace moe.nikky.kinetic_controls.control.kinetic
             }
             else
             {
-                LogError("handle is not set");
+                LogError("handle is invalid");
             }
             // if (!handle.PickupHasObjectSync && !handle.IsHeldLocally)
             // {
@@ -295,12 +295,12 @@ namespace moe.nikky.kinetic_controls.control.kinetic
         internal override void UpdateIndicatorsInEditor()
         {
             base.UpdateIndicatorsInEditor();
-            UpdateValueIndicator(
-                Mathf.Lerp(minRot, maxRot, smoothedCurrentNormalized)
-            );
-            UpdateTargetIndicator(
-                Mathf.Lerp(minRot, maxRot, smoothingTargetNormalized)
-            );
+            // UpdateValueIndicator(
+            //     Mathf.Lerp(minRot, maxRot, smoothedCurrentNormalized)
+            // );
+            // UpdateTargetIndicator(
+            //     Mathf.Lerp(minRot, maxRot, smoothingTargetNormalized)
+            // );
         }
 //             [ContextMenu("Setup Editor Helper Script")]
 //             private void SetupEditorHelper()

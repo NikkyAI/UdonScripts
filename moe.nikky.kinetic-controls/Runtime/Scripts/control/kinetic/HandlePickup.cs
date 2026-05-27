@@ -33,14 +33,24 @@ namespace moe.nikky.kinetic_controls.control.kinetic
         {
             base.AccessChanged();
 
+            // var player = Networking.LocalPlayer;
+            // if(player != null && !player.IsUserInVR())
             if (!IsInVR)
             {
                 // desktop mode is handle with Interact()
                 pickup.pickupable = false;
-                return;
+            }
+            else if(IsAuthorized)
+            {
+                pickup.pickupable = true;
+                pickup.InteractionText = "Grab to adjust";
+            }
+            else
+            {
+                pickup.pickupable = false;
+                pickup.InteractionText = "";
             }
 
-            pickup.pickupable = IsAuthorized;
         }
 
         public override void ResetTransformIfNotManipulated()

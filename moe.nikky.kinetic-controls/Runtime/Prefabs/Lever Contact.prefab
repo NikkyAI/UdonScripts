@@ -580,6 +580,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5792424515958514003}
   debugLog: {fileID: 0}
+  logLevel: 1
   selectionId: 0
   colorDisabled: {r: 0.25, g: 0.25, b: 0.25, a: 1}
   colorEnabled: {r: 0, g: 0.14901961, b: 0.5019608, a: 1}
@@ -632,6 +633,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 5843056079495210234}
   debugLog: {fileID: 0}
+  logLevel: 1
   materialSource: {fileID: 3183002987258388596}
   materialIndex: 0
   propertyName: _NeonColor
@@ -801,6 +803,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 3811480514333880512}
   debugLog: {fileID: 0}
+  logLevel: 1
   enableValueRemapping: 0
   remapFrom: {x: 0, y: 1}
   remapTo: {x: 0, y: 1}
@@ -943,6 +946,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 7148252375209851790}
   debugLog: {fileID: 0}
+  logLevel: 1
   enforceACL: 1
   accessControl: {fileID: 0}
   boolAuthorizedDrivers: {fileID: 5540446195840728052}
@@ -1449,6 +1453,7 @@ MonoBehaviour:
     SerializationNodes: []
   _udonSharpBackingUdonBehaviour: {fileID: 8878697846707204553}
   debugLog: {fileID: 0}
+  logLevel: 1
   enableValueRemapping: 0
   remapFrom: {x: 0, y: 1}
   remapTo: {x: 0, y: 1}

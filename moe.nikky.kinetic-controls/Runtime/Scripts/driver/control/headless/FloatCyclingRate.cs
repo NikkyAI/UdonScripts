@@ -18,7 +18,7 @@ namespace moe.nikky.kinetic_controls.driver.control.headless
         {
             if (!enabled) return;
         
-            cyclingFloat.speed = value;
+            cyclingFloat.Speed = value;
         }
     }
 }

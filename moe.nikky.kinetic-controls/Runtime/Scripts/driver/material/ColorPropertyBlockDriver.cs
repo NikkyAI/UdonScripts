@@ -52,7 +52,7 @@ namespace moe.nikky.kinetic_controls.driver.material
         public override void ApplyColorValue(Color value)
         {
             base.ApplyColorValue(value);
-            Log($"applying new value: {value}");
+            LogDebug($"applying new color: {value}");
             OnUpdateColor(value);
         }
 #endif

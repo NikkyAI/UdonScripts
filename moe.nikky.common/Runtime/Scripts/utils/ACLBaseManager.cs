@@ -1,5 +1,4 @@
-﻿using moe.nikky.common.Editor;
-using Texel;
+﻿using Texel;
 using UdonSharp;
 using UnityEditor;
 using UnityEngine;
@@ -9,9 +8,7 @@ using VRC.SDKBase;
 
 namespace moe.nikky.common.utils
 {
-#if UNITY_EDITOR && !COMPILER_UDONSHARP
-    [RequireComponent(typeof(PreProcessEditorHelper))]
-#endif
+
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
     public class ACLBaseManager : TexelAccessControl
     {

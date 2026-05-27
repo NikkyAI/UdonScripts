@@ -1,6 +1,5 @@
 ﻿using System;
 using moe.nikky.common;
-using moe.nikky.common.Editor;
 using UnityEngine;
 using UnityEngine.Serialization;
 using VRC;
@@ -8,9 +7,7 @@ using VRC.SDKBase;
 
 namespace moe.nikky.kinetic_controls.driver.control
 {
-#if UNITY_EDITOR && !COMPILER_UDONSHARP
-    [RequireComponent(typeof(PreProcessEditorHelper))]
-#endif
+
     public class BoolSyncedDriver : BoolDriver
     {
         [FormerlySerializedAs("syncedBehaviours")]

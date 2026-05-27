@@ -78,12 +78,12 @@ namespace moe.nikky.kinetic_controls.driver.udon
                 {
                     if (UdonsharpFinder.Find(ext, out var udonSharpBehaviour))
                     {
-                        Log($"found {udonSharpBehaviour}");
+                        LogDebug($"found {udonSharpBehaviour}");
                         var serializedObj = new SerializedObject(udonSharpBehaviour);
                         var property = serializedObj.FindProperty(floatField);
                         if (property != null)
                         {
-                            Log($"found {floatField}");
+                            LogDebug($"found {floatField}");
                             if (!Mathf.Approximately(property.floatValue, value))
                             {
                                 Log($"setting value of {floatField} to {value}");
