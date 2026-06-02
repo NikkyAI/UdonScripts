@@ -24,10 +24,17 @@ namespace moe.nikky.common
         
         #endregion
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
+        protected virtual bool UpdateInEditor => false;
 
         public virtual void ApplyBoolValue(bool value)
         {
+            if (!UpdateInEditor || Application.isPlaying) return;
             _EnsureInit();
+            OnUpdateBool(value);
+            PostEditorUpdate(value);
+        }
+        protected virtual void PostEditorUpdate(bool value)
+        {
         }
 #endif
     }

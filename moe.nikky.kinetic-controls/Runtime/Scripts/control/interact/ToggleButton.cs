@@ -230,15 +230,10 @@ namespace moe.nikky.kinetic_controls.control.interact
             Log($"found {valueBoolDrivers.Length} bool drivers");
         }
 
-        public override bool OnPreprocess()
+        public override void OnPreprocess()
         {
-            if (!base.OnPreprocess())
-            {
-                return false;
-            }
+            base.OnPreprocess();
             FindBoolDrivers();
-
-            return true;
         }
 #endif
     }

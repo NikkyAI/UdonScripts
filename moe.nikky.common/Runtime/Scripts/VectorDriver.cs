@@ -24,6 +24,33 @@ namespace moe.nikky.common
             _EnsureInit();
             cachedValue = value;
         }
+        
+        protected virtual bool UpdateInEditor => false;
+
+        protected virtual void EditorUpdateVectorValue(Vector4 value)
+        {
+            if (!UpdateInEditor || Application.isPlaying) return;
+            _EnsureInit();
+            OnUpdateVector(value);
+            PostEditorUpdate(value);
+        }
+
+        protected virtual void PostEditorUpdate(Vector4 value)
+        {
+        }
+
+        // public void EditorUpdateFloatRescale(float inputValue)
+        // {
+        //     if (!enabled) return;
+        //     if (enableValueRemapping)
+        //     {
+        //         inputValue = Mathf.InverseLerp(remapFrom.x, remapFrom.y, inputValue);
+        //         inputValue = Mathf.LerpUnclamped(remapTo.x, remapTo.y, inputValue);
+        //     }
+        //
+        //     EditorUpdateFloatValue(inputValue);
+        //     PostEditorUpdate(inputValue);
+        // }
 #endif
     }
 }

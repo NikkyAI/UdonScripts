@@ -43,12 +43,22 @@ namespace moe.nikky.kinetic_controls.control.headless
                 if (speed == 0 && value != 0)
                 {
                     _zeroHandle.Kill();
-                    _handle.Restart();
+                    _handle = VRCTween.TweenFloat(
+                            0f,
+                            1f,
+                            0.1f,
+                            this,
+                            nameof(tweenProgress),
+                            nameof(UpdateCyclingValue),
+                            VRCTweenEase.Linear
+                        )
+                        .SetLoops(-1, VRCTweenLoopType.Incremental)
+                        .SetSpeedBased();
                 }
 
                 if (speed != 0 && value == 0)
                 {
-                    _handle.Pause();
+                    _handle. Kill();
                     var from = (1 + _accumulator % 1f) % 1;
                     if (from > 0.5)
                     {
@@ -76,8 +86,8 @@ namespace moe.nikky.kinetic_controls.control.headless
 
                 speed = value;
                 // -\frac{1}{\operatorname{abs}\left(x\cdot10\right)+1}+1
-                lerpTowardValue = 1 - (1 / (Mathf.Abs(speed * 10) + 1));
-                maxAccumulate = 1 + (1 / (Mathf.Abs(speed * 10) + 1));
+                // lerpTowardValue = 1 - (1 / (Mathf.Abs(speed * 10) + 1));
+                // maxAccumulate = 1 + (1 / (Mathf.Abs(speed * 10) + 1));
 
                 // if (speed == 0)
                 // {
@@ -86,8 +96,8 @@ namespace moe.nikky.kinetic_controls.control.headless
             }
         }
 
-        private float lerpTowardValue = 0f;
-        private float maxAccumulate = 1f;
+        // private float lerpTowardValue = 0f;
+        // private float maxAccumulate = 1f;
 
         [SerializeField] [Range(0.001f, 0.1f)] [FieldChangeCallback(nameof(MinSpeed))]
         public float minSpeed = 0.01f;
@@ -135,6 +145,11 @@ namespace moe.nikky.kinetic_controls.control.headless
         {
             _EnsureInit();
         }
+        
+        void OnDestroy()
+        {
+            gameObject.KillAllTweens();
+        }
 
         protected override void _Init()
         {
@@ -143,16 +158,13 @@ namespace moe.nikky.kinetic_controls.control.headless
 
             // SendCustomEventDelayedFrames(nameof(OnUpdateCyclingValue), smoothingUpdateInterval);
             SendCustomEventDelayedFrames(nameof(PostInitResetValues), 5);
+        }
 
-            _handle = VRCTween.TweenFloat(0f, 1f, 0.1f, this, nameof(tweenProgress), nameof(UpdateCyclingValue),
-                        VRCTweenEase.Linear)
-                    .SetLoops(-1, VRCTweenLoopType.Incremental)
-                    .SetSpeedBased()
-                // .OnComplete(this, nameof(OnComplete))
-                ;
-            if (speed != 0)
+        public void PostInitResetValues()
+        {
+            foreach (var driver in _floatDrivers)
             {
-                _handle.Play();
+                driver.UpdateFloatRescale(0f);
             }
         }
 
@@ -209,8 +221,9 @@ namespace moe.nikky.kinetic_controls.control.headless
             if (!Application.isPlaying)
             {
                 LogDebug($"setting float drivers: {value}");
-                foreach (var driver in _floatDrivers)
+                for (var i = 0; i < _floatDrivers.Length; i++)
                 {
+                    var driver = _floatDrivers[i];
                     driver.EditorUpdateFloatRescale(value);
                 }
             }
@@ -221,15 +234,15 @@ namespace moe.nikky.kinetic_controls.control.headless
         {
             var value = Mathf.Repeat(_accumulator + offset, 1f);
 
-            if (!Mathf.Approximately(_lastValue, value))
-            {
-                foreach (var driver in _floatDrivers)
+            // if (!Mathf.Approximately(_lastValue, value))
+            // {
+                for (var i = 0; i < _floatDrivers.Length; i++)
                 {
-                    driver.UpdateFloatRescale(value);
+                    _floatDrivers[i].UpdateFloatRescale(value);
                 }
 
-                _lastValue = value;
-            }
+            //    _lastValue = value;
+            // }
 
             return value;
         }
@@ -237,14 +250,6 @@ namespace moe.nikky.kinetic_controls.control.headless
         public void OnComplete()
         {
             //_accumulator += tweenProgress;
-        }
-
-        public void PostInitResetValues()
-        {
-            foreach (var driver in _floatDrivers)
-            {
-                driver.UpdateFloatRescale(0f);
-            }
         }
 
         public void Reset()
@@ -404,16 +409,10 @@ namespace moe.nikky.kinetic_controls.control.headless
             Log($"found {_floatDrivers.Length} float drivers");
         }
 
-        public override bool OnPreprocess()
+        public override void OnPreprocess()
         {
-            if (!base.OnPreprocess())
-            {
-                return false;
-            }
-
+            base.OnPreprocess();
             FindFloatDrivers();
-
-            return true;
         }
 #endif
     }

@@ -64,8 +64,9 @@ namespace moe.nikky.kinetic_controls.driver.transform
             }
         }
 
-        public override bool OnPreprocess()
+        public override void OnPreprocess()
         {
+            base.OnPreprocess();
             if (!Utilities.IsValid(findInChildren))
             {
                 findInChildren = transform;
@@ -90,7 +91,6 @@ namespace moe.nikky.kinetic_controls.driver.transform
                 }
             }
 
-            return true;
         }
 #endif
     }

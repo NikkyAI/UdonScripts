@@ -46,12 +46,12 @@ namespace moe.nikky.kinetic_controls.driver.gameobject
         }
         
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-        public override void ApplyBoolValue(bool value)
-        {
-            base.ApplyBoolValue(value);
-            if (!enabled) return;
-            OnUpdateBool(value);
+        protected override bool UpdateInEditor => true;
 
+        protected override void PostEditorUpdate(bool value)
+        {
+            base.PostEditorUpdate(value);
+            
             if (!Application.isPlaying)
             {
                 this.MarkDirty();
@@ -62,7 +62,7 @@ namespace moe.nikky.kinetic_controls.driver.gameobject
                         obj.MarkDirty();
                     }
                 }
-
+        
                 foreach (var obj in targetsOff)
                 {
                     if (Utilities.IsValid(obj))
@@ -72,6 +72,32 @@ namespace moe.nikky.kinetic_controls.driver.gameobject
                 }
             }
         }
+        // public override void ApplyBoolValue(bool value)
+        // {
+        //     base.ApplyBoolValue(value);
+        //     if (!enabled) return;
+        //     OnUpdateBool(value);
+        //
+        //     if (!Application.isPlaying)
+        //     {
+        //         this.MarkDirty();
+        //         foreach (var obj in targetsOn)
+        //         {
+        //             if (Utilities.IsValid(obj))
+        //             {
+        //                 obj.MarkDirty();
+        //             }
+        //         }
+        //
+        //         foreach (var obj in targetsOff)
+        //         {
+        //             if (Utilities.IsValid(obj))
+        //             {
+        //                 obj.MarkDirty();
+        //             }
+        //         }
+        //     }
+        // }
 
         [@ContextMenu("Fix")]
         public void Fix()

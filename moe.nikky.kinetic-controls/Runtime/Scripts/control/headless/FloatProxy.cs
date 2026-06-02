@@ -56,15 +56,11 @@ namespace moe.nikky.kinetic_controls.control.headless
             }
         }
 
-        public override bool OnPreprocess()
+        public override void OnPreprocess()
         {
-            if (!base.OnPreprocess())
-            {
-                return false;
-            }
+            base.OnPreprocess();
 
             FindFloatDrivers();
-            return true;
         }
 
         public void EditorUpdateFloatRescale(float value)

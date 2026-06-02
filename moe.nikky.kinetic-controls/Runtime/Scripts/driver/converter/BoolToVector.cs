@@ -36,5 +36,9 @@ namespace moe.nikky.kinetic_controls.driver.converter
                 _vectorDrivers[i].UpdateVector(vectorValue);
             }
         }
+          
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+        protected override bool UpdateInEditor => true;
+#endif
     }
 }

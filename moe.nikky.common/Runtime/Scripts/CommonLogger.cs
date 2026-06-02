@@ -41,7 +41,7 @@ namespace moe.nikky.common
 
         protected abstract string LogPrefix { get; }
 
-        protected virtual Color LogColor => Color.white;
+        protected virtual string LogColor => "#407070";
 
         private void InitPath()
         {
@@ -53,11 +53,11 @@ namespace moe.nikky.common
             t = t.parent;
             while (t != null)
             {
-                _path = $"{t.name.Color(pathColor)} / {_path}";
+                _path = $"{t.name.Color(pathColor)}/{_path}";
                 t = t.parent;
             }
 
-            _path = $" / {_path}";
+            _path = $"/{_path}";
 
             _pathInitialized = true;
         }
@@ -66,9 +66,9 @@ namespace moe.nikky.common
         {
             var c = LogColor;
             // _logPrefix = LogPrefix;
-            if (c != Color.white)
+            if (c != Color.white.ToHex())
             {
-                _colorPrefix = $"<color=#{c.ToHex()}>";
+                _colorPrefix = $"<color={c}>";
                 _colorPostfix = "</color>";
             }
 

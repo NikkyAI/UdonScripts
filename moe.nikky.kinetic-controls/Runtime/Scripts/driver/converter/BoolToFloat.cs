@@ -37,5 +37,9 @@ namespace moe.nikky.kinetic_controls.driver.converter
                 _floatDrivers[i].UpdateFloatRescale(floatValue);
             }
         }
+         
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+        protected override bool UpdateInEditor => true;
+#endif
     }
 }

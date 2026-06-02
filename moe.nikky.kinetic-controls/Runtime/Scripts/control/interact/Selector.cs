@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using moe.nikky.common;
+using moe.nikky.common.utils;
 using Texel;
 using UdonSharp;
 using UnityEngine;
@@ -219,11 +221,10 @@ namespace moe.nikky.kinetic_controls.control.interact
 
         protected override void AccessChanged()
         {
-            for (var i = 0; i < interactCallbacks.Length; i++)
-            {
-                interactCallbacks[i].OnAccessChanged(IsAuthorized);
-                // interactCallbacks[i].DisableInteractive = !IsAuthorized;
-            }
+            // for (var i = 0; i < interactCallbacks.Length; i++)
+            // {
+            //     interactCallbacks[i].OnAccessChanged(IsAuthorized);
+            // }
         }
 
         // [NonSerialized] private int _interactIndex;
@@ -255,73 +256,26 @@ namespace moe.nikky.kinetic_controls.control.interact
             UpdateSyncedIndex();
         }
 
-        // ReSharper disable InconsistentNaming
-        /*[NonSerialized]*/
-        private int prevDefault = -1;
-
-        /*[NonSerialized]*/
-        private Vector2Int[] prevRemap = { };
-
-        /*[NonSerialized]*/
-        private AccessControl prevAccessControl;
-
-        /*[NonSerialized]*/
-        private bool prevEnforceACL;
-
-        /*[NonSerialized]*/
-        private DebugLog prevDebugLog;
-
-        /*[NonSerialized]*/
-        private bool childrenInitialized = false;
-        // ReSharper restore InconsistentNaming
-
-
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
+        
+        // private void UpdateCallbacks()
+        // {
+        //     foreach (var interactCallback in interactCallbacks)
+        //     {
+        //         interactCallback.EditorACL = EditorACL;
+        //         interactCallback.AuthStateInEditor = AuthStateInEditor;
+        //         interactCallback.EditorEnforceACL = EditorEnforceACL;
+        //         interactCallback.EditorDebugLog = EditorDebugLog;
+        //     }
+        // }
 
-        private void FindDrivers()
+        public override void OnPreprocess()
         {
-            if (Utilities.IsValid(intDriverSource))
-            {
-                // Log("getting int drivers");
-                intDrivers = intDriverSource.GetComponentsInChildren<IntDriver>();
-            }
-        }
-
-        private void FindCallbacks()
-        {
-            if (Utilities.IsValid(gameObject))
-            {
-                // Log("getting interact callbacks");
-                interactCallbacks = gameObject.GetComponentsInChildren<SelectorCallback>();
-            }
-
-            if (Utilities.IsValid(interactCallbacks))
-            {
-                Log($"Found {interactCallbacks.Length} selector callbacks");
-            }
-            else
-            {
-                LogWarning("found no selector callbacks");
-            }
-
-            for (var i = 0; i < interactCallbacks.Length; i++)
-            {
-                var callback = interactCallbacks[i];
-                callback.selector = this;
-                callback.index = i;
-                if (!Application.isPlaying)
-                {
-                    callback.MarkDirty();
-                }
-            }
-        }
-
-        public override bool OnPreprocess()
-        {
+            base.OnPreprocess();
             FindDrivers();
             FindCallbacks();
-            return true;
         }
+
 #endif
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
@@ -332,25 +286,12 @@ namespace moe.nikky.kinetic_controls.control.interact
             base.OnValidate();
             UnityEditor.EditorUtility.SetDirty(this);
 
-            if (!childrenInitialized
-                || prevAccessControl != AccessControl
-                || prevEnforceACL != EnforceACL
-                || prevDebugLog != DebugLog
-               )
+            if(ValidationCache.ShouldRunValidation(this, HashCode.Combine(
+                   AuthStateInEditor,AccessControl,EnforceACL,DebugLog,defaultIndex,remapValues)))
             {
-                ApplyACLsAndLog();
-                prevAccessControl = AccessControl;
-                prevDebugLog = DebugLog;
-                childrenInitialized = true;
-            }
-
-            if (prevDefault != defaultIndex
-                || prevRemap.SequenceEqual(remapValues)
-               )
-            {
+                FindDrivers();
+                FindCallbacks();
                 ApplyValues();
-                prevDefault = defaultIndex;
-                prevRemap = remapValues;
             }
         }
 
@@ -383,18 +324,42 @@ namespace moe.nikky.kinetic_controls.control.interact
             }
         }
 
-        [ContextMenu("Apply ACLs and Log")]
-        private void ApplyACLsAndLog()
+        private void FindDrivers()
         {
-            var children = gameObject.GetComponentsInChildren<SelectorCallback>(true);
-            for (var index = 0; index < children.Length; index++)
+            if (Utilities.IsValid(intDriverSource))
             {
-                var interactCallback = children[index];
-                interactCallback.index = index;
-                // interactCallback.EditorACL = AccessControl;
-                interactCallback.EditorDebugLog = DebugLog;
-                // interactCallback.EditorEnforceACL = EnforceACL;
+                // Log("getting int drivers");
+                intDrivers = intDriverSource.GetComponentsInChildren<IntDriver>();
+            }
+        }
 
+        [ContextMenu("Update Callbacks Components")]
+        private void FindCallbacks()
+        {
+            if (Utilities.IsValid(gameObject))
+            {
+                // Log("getting interact callbacks");
+                interactCallbacks = gameObject.GetComponentsInChildren<SelectorCallback>();
+            }
+
+            if (Utilities.IsValid(interactCallbacks))
+            {
+                Log($"Found {interactCallbacks.Length} selector callbacks");
+            }
+            else
+            {
+                LogWarning("found no selector callbacks");
+            }
+
+            for (var i = 0; i < interactCallbacks.Length; i++)
+            {
+                var interactCallback = interactCallbacks[i];
+                interactCallback.selector = this;
+                interactCallback.index = i;
+                interactCallback.AuthStateInEditor = AuthStateInEditor;
+                interactCallback.EditorACL = AccessControl;
+                interactCallback.EditorDebugLog = DebugLog;
+                interactCallback.EditorEnforceACL = EnforceACL;
                 if (!Application.isPlaying)
                 {
                     interactCallback.MarkDirty();

@@ -138,16 +138,12 @@ namespace moe.nikky.kinetic_controls.control.headless
             Log($"found {_triggerDrivers.Length} trigger drivers");
         }
 
-        public override bool OnPreprocess()
+        public override void OnPreprocess()
         {
-            if (!base.OnPreprocess())
-            {
-                return false;
-            }
+            base.OnPreprocess();
 
             FindTriggerDrivers();
 
-            return true;
         }
 #endif
     }

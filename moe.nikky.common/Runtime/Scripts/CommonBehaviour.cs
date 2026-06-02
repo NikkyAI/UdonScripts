@@ -75,12 +75,11 @@ namespace moe.nikky.common
         {
         }
 
-        public virtual bool OnPreprocess()
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+        public virtual void OnPreprocess()
         {
-            return true;
         }
         
-#if UNITY_EDITOR && !COMPILER_UDONSHARP
         [ContextMenu("Preprocess")]
         public void TriggerManually()
         {
@@ -95,6 +94,33 @@ namespace moe.nikky.common
         protected string LocalPlayerName { get; private set; } = "???";
         
         protected bool IsInVR { get; private set; }
+
+
+        public override void OnPlayerJoined(VRCPlayerApi player)
+        {
+            if (player == Networking.LocalPlayer)
+            {
+                LocalPlayer = player;
+                if (Utilities.IsValid(LocalPlayer))
+                {
+                    // LocalPlayer = player;
+                    LocalPlayerName = LocalPlayer.displayName;
+                    IsInVR = LocalPlayer.IsUserInVR();
+                    // _isInVR = true; // fakes being in VR during testing
+                }
+                else
+                {
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+                    if (Application.isPlaying)
+                    {
+                        Debug.LogError($"[{name}] failed to init local player", this);
+                    }
+#else
+                    Debug.LogError("failed to init local player", this);
+#endif
+                }
+            }
+        }
 
         private void InitLocalPlayer()
         {
@@ -111,7 +137,7 @@ namespace moe.nikky.common
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
                 if (Application.isPlaying)
                 {
-                    Debug.LogError("failed to init local player", this);
+                    Debug.LogError($"[{name}] failed to init local player", this);
                 }
 #else
                 Debug.LogError("failed to init local player", this);
@@ -120,6 +146,7 @@ namespace moe.nikky.common
         }
 
         private VRCPlayerApi _owner;
+        protected VRCPlayerApi Owner => _owner;
 
         private void InitOwner()
         {

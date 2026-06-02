@@ -59,16 +59,10 @@ namespace moe.nikky.kinetic_controls.driver.control
             Log($"found {baseBehaviours.Length} base behaviours");
         }
 
-        public override bool OnPreprocess()
+        public override void OnPreprocess()
         {
-            if (!base.OnPreprocess())
-            {
-                return false;
-            }
-
+            base.OnPreprocess();
             FindBaseBehaviours();
-
-            return true;
         }
 #endif
     }

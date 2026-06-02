@@ -262,16 +262,14 @@ namespace moe.nikky.common
 #endif
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-        public override bool OnPreprocess()
+        public override void OnPreprocess()
         {
-            if (!base.OnPreprocess()) return false;
+            base.OnPreprocess();
             FindBoolAuthDrivers();
             foreach (var authorizedDriver in authorizedDrivers)
             {
                 authorizedDriver.ApplyBoolValue(false);
             }
-
-            return true;
         }
 #endif
     }

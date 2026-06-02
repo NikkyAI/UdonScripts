@@ -114,6 +114,12 @@ MonoBehaviour:
   _udonSharpBackingUdonBehaviour: {fileID: 2573194583304611563}
   debugLog: {fileID: 0}
   logLevel: 1
+  authStateInEditor: 1
+  enforceACL: 1
+  accessControl: {fileID: 0}
+  boolAuthorizedDrivers: {fileID: 2331916010665893586}
+  authorizedDrivers:
+  - {fileID: 9138855401627269772}
   boolDriverSource: {fileID: 4891511151803757555}
   selector: {fileID: 0}
   index: -1

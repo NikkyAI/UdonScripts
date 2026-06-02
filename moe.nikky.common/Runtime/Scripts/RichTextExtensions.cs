@@ -4,27 +4,10 @@ namespace moe.nikky.common
 {
     public static class RichTextExtensions
     {
-        public static string ToHex(this Color color)
-        {
-            return string.Format(
-                "{0:X2}{1:X2}{2:X2}{3:X2}",
-                (byte)Mathf.Clamp01(color.r) * 255,
-                (byte)Mathf.Clamp01(color.g) * 255,
-                (byte)Mathf.Clamp01(color.b) * 255,
-                (byte)Mathf.Clamp01(color.a) * 255
-            );
-        }
+        public static string ToHex(this Color clr) =>
+            $"#{(int)(clr.r * 0xff):X2}{(int)(clr.g * 0xff):X2}{(int)(clr.b * 0xff):X2}";
 
-        public static string Color(this string message, Color color)
-        {
-            return string.Format(
-                "<color=#{0:X2}{1:X2}{2:X2}{3:X2}>",
-                (byte)Mathf.Clamp01(color.r) * 255,
-                (byte)Mathf.Clamp01(color.g) * 255,
-                (byte)Mathf.Clamp01(color.b) * 255,
-                (byte)Mathf.Clamp01(color.a) * 255
-            ) + message + "</color>";
-        }
+        public static string Color(this string message, Color color) => $"<color={color.ToHex()}>{message}</color>";
 
         public static string Color(this string message, RichTextColor color)
         {

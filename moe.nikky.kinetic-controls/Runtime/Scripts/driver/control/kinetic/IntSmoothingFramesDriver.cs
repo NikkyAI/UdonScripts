@@ -64,16 +64,11 @@ namespace moe.nikky.kinetic_controls.driver.control.kinetic
             Log($"found {smoothedControls.Length} smoothed controls");
         }
 
-        public override bool OnPreprocess()
+        public override void OnPreprocess()
         {
-            if (!base.OnPreprocess())
-            {
-                return false;
-            }
+            base.OnPreprocess();
 
             FindSmoothedBehaviours();
-
-            return true;
         }
 #endif
     }

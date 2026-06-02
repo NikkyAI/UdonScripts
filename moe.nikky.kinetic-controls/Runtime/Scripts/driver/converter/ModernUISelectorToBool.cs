@@ -76,10 +76,10 @@ namespace moe.nikky.kinetic_controls.driver.converter
             }
         }
 
-        public override bool OnPreprocess()
+        public override void OnPreprocess()
         {
+            base.OnPreprocess();
             FindDrivers();
-            return true;
         }
 #endif
     }

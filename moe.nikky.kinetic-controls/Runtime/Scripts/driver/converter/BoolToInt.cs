@@ -27,5 +27,9 @@ namespace moe.nikky.kinetic_controls.driver.converter
                 _intDrivers[i].UpdateIntRemap(intValue);
             }
         }
+           
+#if UNITY_EDITOR && !COMPILER_UDONSHARP
+        protected override bool UpdateInEditor => true;
+#endif
     }
 }

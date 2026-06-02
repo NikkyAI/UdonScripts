@@ -8,7 +8,7 @@ namespace moe.nikky.kinetic_controls.control.interact
 {
 
     [UdonBehaviourSyncMode(BehaviourSyncMode.None)]
-    public class SelectorCallback : CommonLogger
+    public class SelectorCallback : TexelAccessControl
     {
         [Header("Selector Callback")] //header
         [FormerlySerializedAs("boolToggleDriver")]  //
@@ -34,13 +34,16 @@ namespace moe.nikky.kinetic_controls.control.interact
             _EnsureInit();
         }
 
-        private bool IsAuthorized { get; set; } = false;
-
-        internal void OnAccessChanged(bool isAuthorized)
+        protected override void AccessChanged()
         {
-            IsAuthorized = isAuthorized;
-            DisableInteractive = !isAuthorized;
+            DisableInteractive = !IsAuthorized;
         }
+
+        // internal void OnAccessChanged(bool isAuthorized)
+        // {
+        //     IsAuthorized = isAuthorized;
+        //     DisableInteractive = !isAuthorized;
+        // }
 
         // private bool _isInteracting = false;
         public override void Interact()
@@ -64,20 +67,15 @@ namespace moe.nikky.kinetic_controls.control.interact
         //     }
         // }
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-        public override bool OnPreprocess()
+        public override void OnPreprocess()
         {
-            if (!base.OnPreprocess())
-            {
-                return false;
-            }
+            base.OnPreprocess();
 
             if (Utilities.IsValid(boolDriverSource))
             {
                 boolDrivers = boolDriverSource.GetComponentsInChildren<BoolDriver>();
             }
             Log($"found {boolDrivers.Length} bool drivers");
-
-            return true;
         }
 #endif
     }

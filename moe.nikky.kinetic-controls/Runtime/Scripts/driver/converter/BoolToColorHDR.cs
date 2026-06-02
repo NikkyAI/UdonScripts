@@ -28,6 +28,10 @@ namespace moe.nikky.kinetic_controls.driver.converter
             {
                 _colorDrivers = colorDrivers.GetComponents<ColorDriver>();
             }
+            else
+            {
+                _colorDrivers = gameObject.GetComponents<ColorDriver>();
+            }
         }
 
         protected override string LogPrefix => nameof(BoolToColorHDR);
@@ -41,13 +45,9 @@ namespace moe.nikky.kinetic_controls.driver.converter
                 _colorDrivers[i].OnUpdateColor(color);
             }
         }
-        
+         
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
-        public override void ApplyBoolValue(bool value)
-        {
-            base.ApplyBoolValue(value);
-            OnUpdateBool(value);
-        }
+        protected override bool UpdateInEditor => true;
 #endif
     }
 }

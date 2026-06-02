@@ -14,6 +14,10 @@ namespace moe.nikky.common
         protected bool enableValueRemapping = false;
 
         [SerializeField]
+        [Tooltip("clamps value to input defined input/output range")]
+        protected bool clampValue = false;
+        
+        [SerializeField]
         [ReadOnly(nameof(enableValueRemapping), true)]
         protected Vector2 remapFrom = new Vector2(0, 1);
 
@@ -30,8 +34,13 @@ namespace moe.nikky.common
             // var inputValue = inputValue;
             if (enableValueRemapping)
             {
-                inputValue = Mathf.InverseLerp(remapFrom.x, remapFrom.y, inputValue);
-                inputValue = Mathf.LerpUnclamped(remapTo.x, remapTo.y, inputValue);
+                var normalized = Mathf.InverseLerp(remapFrom.x, remapFrom.y, inputValue);
+                if(clampValue)
+                {
+                    normalized = Mathf.Clamp01(normalized);
+                }
+                inputValue = Mathf.LerpUnclamped(remapTo.x, remapTo.y, normalized);
+                
             }
 
             OnUpdateFloat(inputValue);
@@ -45,12 +54,7 @@ namespace moe.nikky.common
         public void _SliderUpdated()
         {
             var floatValue = sliderValue;
-            if (enableValueRemapping)
-            {
-                floatValue = Mathf.LerpUnclamped(remapTo.x, remapTo.y, floatValue);
-            }
-
-            OnUpdateFloat(floatValue);
+            UpdateFloatRescale(floatValue);
         }
 
 #if UNITY_EDITOR && !COMPILER_UDONSHARP
@@ -58,7 +62,7 @@ namespace moe.nikky.common
 
         protected virtual void EditorUpdateFloatValue(float value)
         {
-            if (!UpdateInEditor) return;
+            if (!UpdateInEditor || Application.isPlaying) return;
             _EnsureInit();
             OnUpdateFloat(value);
             PostEditorUpdate(value);
@@ -73,11 +77,17 @@ namespace moe.nikky.common
             if (!enabled) return;
             if (enableValueRemapping)
             {
-                inputValue = Mathf.InverseLerp(remapFrom.x, remapFrom.y, inputValue);
-                inputValue = Mathf.LerpUnclamped(remapTo.x, remapTo.y, inputValue);
+                var normalized = Mathf.InverseLerp(remapFrom.x, remapFrom.y, inputValue);
+                if(clampValue)
+                {
+                    normalized = Mathf.Clamp01(normalized);
+                }
+                inputValue = Mathf.LerpUnclamped(remapTo.x, remapTo.y, normalized);
+
             }
 
             EditorUpdateFloatValue(inputValue);
+            PostEditorUpdate(inputValue);
         }
 #endif
     }

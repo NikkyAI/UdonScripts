@@ -48,10 +48,11 @@ namespace moe.nikky.kinetic_controls.driver.postprocessing
             volume.enabled = true;
             // SendCustomEventDelayedFrames(nameof(OnUpdateFrame), 1);
 
-            float currentTime = Mathf.Lerp(0, timeToSwitch, volume.weight);
-            LogDebug($"Goto {currentTime}");
-            LogDebug($"current {_handle.Elapsed}");
-            LogDebug($"target {_targetWeight}");
+            // float currentTime = Mathf.Lerp(0, timeToSwitch, volume.weight);
+            // LogDebug($"Goto {currentTime}");
+            // LogDebug($"current {_handle.Elapsed}");
+            // LogDebug($"target {_targetWeight}");
+
             // _handle.Pause();
             // _handle.Goto(currentTime, false);
             _handle = _handle

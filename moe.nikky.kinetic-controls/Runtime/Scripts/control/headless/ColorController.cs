@@ -101,10 +101,9 @@ namespace moe.nikky.kinetic_controls.control.headless
             }
         }
 
-        public override bool OnPreprocess()
+        public override void OnPreprocess()
         {
             FindDrivers();
-            return true;
         }
         
         

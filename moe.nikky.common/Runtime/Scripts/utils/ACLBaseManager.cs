@@ -67,12 +67,11 @@ namespace moe.nikky.common.utils
             }
         }
 
-        public override bool OnPreprocess()
+        public override void OnPreprocess()
         {
-            if (!base.OnPreprocess()) return false;
+            base.OnPreprocess();
 
             ApplyACLs();
-            return true;
         }
 
         [ContextMenu("Apply ACLs")]
