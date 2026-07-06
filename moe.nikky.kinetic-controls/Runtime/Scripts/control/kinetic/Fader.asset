@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: Fader
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 1baf92ce558919540a7500e6556823a6, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 46be1edd4d1d282469a321702eca154f, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 01505b3944adbb941bc717a7d8a97b52, type: 3}

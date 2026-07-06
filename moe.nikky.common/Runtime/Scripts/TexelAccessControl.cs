@@ -110,7 +110,7 @@ namespace moe.nikky.common
 
                 Log($"setting isAuthorized to {IsAuthorized} for {LocalPlayerName}");
 
-                Log($"updating {authorizedDrivers.Length} drivers");
+                Log($"updating {authorizedDrivers.Length} auth drivers");
                 foreach (var t in authorizedDrivers)
                 {
                     if (Utilities.IsValid(t))

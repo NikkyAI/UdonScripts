@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: FloatProxy
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 43c23473b49227e46b48be4c5bb406b8, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 732b245aaee0ec74f84b4e23525037c2, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: dfadeda2fb994c17bbc83203a8b0cf71, type: 3}

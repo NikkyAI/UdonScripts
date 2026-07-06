@@ -195,6 +195,9 @@ namespace moe.nikky.kinetic_controls.control
         protected override void _Init()
         {
             base._Init();
+            
+            Log($"target value drivers: {targetValueFloatDrivers.Length}");
+            Log($"smoothed value drivers: {smoothedValueFloatDrivers.Length}");
             // FindDrivers();
 
             // _handle = VRCTween.TweenFloat(

@@ -271,7 +271,7 @@ namespace moe.nikky.kinetic_controls.Editor
             l.minRot = minRotation;
             l.maxRot = maxRotation;
 
-            var isCyclic = Mathf.Approximately(minRotation, -180f) && Mathf.Approximately(maxRotation, 180f);
+            var isCyclic = Mathf.Approximately(minRotation, -180f) && Mathf.Approximately(maxRotation, 180f) ||  Mathf.Approximately(minRotation, 180f) && Mathf.Approximately(maxRotation, -180f);
             l.isCyclic = isCyclic;
             if (Utilities.IsValid(minLimitIndicator))
             {

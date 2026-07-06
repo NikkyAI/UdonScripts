@@ -45,11 +45,11 @@ namespace moe.nikky.common.Editor.Scripts
             }
         }
 
-        [MenuItem("Tools/NikkyAI/PreProcessHook")]
-        private static void RunManually()
-        {
-            Process(SceneManager.GetActiveScene());
-        }
+        // [MenuItem("Tools/NikkyAI/PreProcessHook")]
+        // private static void RunManually()
+        // {
+        //     Process(SceneManager.GetActiveScene());
+        // }
 
     }
 }

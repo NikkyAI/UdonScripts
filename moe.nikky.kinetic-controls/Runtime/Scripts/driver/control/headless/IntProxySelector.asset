@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: IntProxySelector
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: a73e04141a42835469613b743edfa95c, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 9ec78f5424cf1854995e31729b4b80ee, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 39d0241fa7d837e4f9ef7f0de2358ac0, type: 3}

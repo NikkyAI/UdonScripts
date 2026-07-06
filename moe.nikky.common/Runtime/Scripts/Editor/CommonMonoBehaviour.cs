@@ -41,6 +41,12 @@ namespace moe.nikky.common.Editor
         {
             
         }
+        
+        [ContextMenu("Preprocess")]
+        public virtual void ManualPrepress()
+        {
+            OnPreprocess();
+        }
 #endif
         private string _colorPostfix = "";
         private string _colorPrefix = "";

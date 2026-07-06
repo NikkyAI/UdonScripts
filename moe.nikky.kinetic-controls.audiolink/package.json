@@ -7,7 +7,7 @@
   "gitDependencies": {},
   "vpmDependencies": {
     "moe.nikky.kinetic-controls": "0.1.0-dev",
-    "com.llealloo.audiolink": "^3.1.2"
+    "com.llealloo.audiolink": "~3.1.2"
   },
   "author": {
     "name": "NikkyAI",

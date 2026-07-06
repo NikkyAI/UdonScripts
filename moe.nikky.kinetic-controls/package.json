@@ -8,7 +8,7 @@
   "vpmDependencies": {
     "moe.nikky.common": "0.1.0-dev",
     "com.texelsaur.access": "^1.2.4",
-    "sh.orels.shaders": "^7.2.0"
+    "sh.orels.shaders": "^7.3.0"
   },
   "author": {
     "name": "NikkyAI",

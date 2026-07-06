@@ -148,7 +148,13 @@ namespace moe.nikky.kinetic_controls.control.headless
         
         void OnDestroy()
         {
-            gameObject.KillAllTweens();
+            // if(Utilities.IsValid(gameObject))
+            // {
+            //     gameObject.KillAllTweens();
+            // }
+
+            _handle.Kill();
+            _zeroHandle.Kill();
         }
 
         protected override void _Init()

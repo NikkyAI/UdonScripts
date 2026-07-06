@@ -1,5 +1,6 @@
 ﻿using moe.nikky.common;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VRC.SDKBase;
 using VRC.Udon;
 
@@ -13,8 +14,12 @@ namespace moe.nikky.kinetic_controls.driver.udon
 
         [SerializeField]
         private string boolField;
+        [FormerlySerializedAs("eventName")] [SerializeField]
+        private string eventNameChanged;
         [SerializeField]
-        private string eventName;
+        private string eventNameTrue;
+        [SerializeField]
+        private string eventNameFalse;
 
         protected override string LogPrefix => nameof(BoolUdonDriver);
 
@@ -26,23 +31,54 @@ namespace moe.nikky.kinetic_controls.driver.udon
     
         public override void OnUpdateBool(bool value)
         {
-            for (var i = 0; i < externalBehaviours.Length; i++)
-            {
-                var ext = externalBehaviours[i];
-                if (Utilities.IsValid(ext))
-                {
-                    ext.SetProgramVariable(boolField, value);
-                }
-            }
-
-            if (eventName.Length > 0)
+            if (boolField.Length > 0)
             {
                 for (var i = 0; i < externalBehaviours.Length; i++)
                 {
                     var ext = externalBehaviours[i];
                     if (Utilities.IsValid(ext))
                     {
-                        ext.SendCustomEvent(eventName);
+                        ext.SetProgramVariable(boolField, value);
+                    }
+                }
+            }
+
+            if (eventNameChanged.Length > 0)
+            {
+                for (var i = 0; i < externalBehaviours.Length; i++)
+                {
+                    var ext = externalBehaviours[i];
+                    if (Utilities.IsValid(ext))
+                    {
+                        ext.SendCustomEvent(eventNameChanged);
+                    }
+                }
+            }
+            if (value)
+            {
+                if (eventNameTrue.Length > 0)
+                {
+                    for (var i = 0; i < externalBehaviours.Length; i++)
+                    {
+                        var ext = externalBehaviours[i];
+                        if (Utilities.IsValid(ext))
+                        {
+                            ext.SendCustomEvent(eventNameTrue);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (eventNameFalse.Length > 0)
+                {
+                    for (var i = 0; i < externalBehaviours.Length; i++)
+                    {
+                        var ext = externalBehaviours[i];
+                        if (Utilities.IsValid(ext))
+                        {
+                            ext.SendCustomEvent(eventNameFalse);
+                        }
                     }
                 }
             }

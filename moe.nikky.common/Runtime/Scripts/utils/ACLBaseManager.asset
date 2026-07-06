@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: ACLBaseManager
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 32781ea5f6136c748872e6b35fca1778, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 9f1293dc12d463d459ec627becb33b68, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: c0da6a7a0b20ddb40a3a911adc614b82, type: 3}

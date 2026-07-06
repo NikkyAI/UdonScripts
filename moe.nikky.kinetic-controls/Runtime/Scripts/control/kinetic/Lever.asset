@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: Lever
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 04ff94251bee0ac49a660d100eea6498, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: b77b28a110e7a2649959b7c6628ad5aa, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 0a4acdf67ac46b545b1b32e8f2bac882, type: 3}

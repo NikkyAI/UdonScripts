@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: IntUITextDriver
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: 852e32ec7ac193549bb6b16d7dc37c4b, type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: cd59627d82cf72b48a64947038996dc0, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 31864702136ae5f4b95f65057731e7fc, type: 3}

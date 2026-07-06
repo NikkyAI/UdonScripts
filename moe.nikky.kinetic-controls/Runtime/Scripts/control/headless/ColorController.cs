@@ -19,8 +19,9 @@ namespace moe.nikky.kinetic_controls.control.headless
         [ReadOnly]
         [NonReorderable]
         private ColorDriver[] _colorDrivers = {};
+
+        [SerializeField] private bool hdr = false;
         
-        // private int[] _propertyIds = { };
         protected override string LogPrefix => nameof(ColorController);
         void Start()
         {
@@ -72,8 +73,8 @@ namespace moe.nikky.kinetic_controls.control.headless
         [UsedImplicitly]
         public void UpdateColor()
         {
-            LogDebug($"update color ({hue}, {saturation}, {brightness})");
-            Color value = Color.HSVToRGB(hue, saturation, brightness);
+            LogDebug($"update color ({hue}, {saturation}, {brightness}, {hdr})");
+            Color value = Color.HSVToRGB(hue, saturation, brightness, hdr);
             if (value != _lastColor)
             {
                 // Log($"applying color {value} to {_colorDrivers.Length} drivers");
@@ -111,7 +112,7 @@ namespace moe.nikky.kinetic_controls.control.headless
         public void EditorUpdateColor()
         {
             FindDrivers();
-            Color value = Color.HSVToRGB(hue, saturation, brightness);
+            Color value = Color.HSVToRGB(hue, saturation, brightness, hdr);
             foreach (var colorDriver in _colorDrivers)
             {
                 LogDebug($"Applying color {value} to driver {colorDriver}");

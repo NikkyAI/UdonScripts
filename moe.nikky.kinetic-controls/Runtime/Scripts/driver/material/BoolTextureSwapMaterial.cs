@@ -9,8 +9,8 @@ namespace moe.nikky.kinetic_controls.driver.material
         [SerializeField] private Material[] materials = { };
         // [SerializeField] private MeshRenderer[] renderers = { };
         [SerializeField] private string property;
-        [SerializeField] private RenderTexture disabledTexture;
-        [SerializeField] private RenderTexture enabledTexture;
+        [SerializeField] private Texture disabledTexture;
+        [SerializeField] private Texture enabledTexture;
 
         private int _propertyId;
     
